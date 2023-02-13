@@ -39,7 +39,7 @@ import java.io.StringReader;
         servlet = "org.glassfish.jersey.servlet.ServletContainer")
 public class PlayerResource extends BaseResource {
     @Context
-    private HttpServletRequest request;
+    private HttpServletRequest httpServletRequest;
 
     /**
      * Logger.
@@ -67,7 +67,7 @@ public class PlayerResource extends BaseResource {
         }
         
         // Set the resource to the right broadcaster
-        AtmosphereResource atmosphereResource = (AtmosphereResource) request.getAttribute(ApplicationConfig.ATMOSPHERE_RESOURCE);
+        AtmosphereResource atmosphereResource = (AtmosphereResource) httpServletRequest.getAttribute(ApplicationConfig.ATMOSPHERE_RESOURCE);
         @SuppressWarnings("deprecation")
         Broadcaster lookup = BroadcasterFactory.getDefault().lookup(token, true);
         atmosphereResource.setBroadcaster(lookup);

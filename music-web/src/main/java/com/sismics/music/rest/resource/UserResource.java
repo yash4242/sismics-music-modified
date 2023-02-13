@@ -85,7 +85,7 @@ public class UserResource extends BaseResource {
 
         if (localeId == null) {
             // Set the locale from the HTTP headers
-            localeId = LocaleUtil.getLocaleIdFromAcceptLanguage(request.getHeader("Accept-Language"));
+            localeId = LocaleUtil.getLocaleIdFromAcceptLanguage(httpServletRequest.getHeader("Accept-Language"));
         }
         user.setLocaleId(localeId);
         
@@ -318,8 +318,8 @@ public class UserResource extends BaseResource {
 
         // Get the value of the session token
         String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
+        if (httpServletRequest.getCookies() != null) {
+            for (Cookie cookie : httpServletRequest.getCookies()) {
                 if (TokenBasedSecurityFilter.COOKIE_NAME.equals(cookie.getName())) {
                     authToken = cookie.getValue();
                 }
@@ -424,7 +424,7 @@ public class UserResource extends BaseResource {
         if (!authenticate()) {
             response.add("anonymous", true);
 
-            String localeId = LocaleUtil.getLocaleIdFromAcceptLanguage(request.getHeader("Accept-Language"));
+            String localeId = LocaleUtil.getLocaleIdFromAcceptLanguage(httpServletRequest.getHeader("Accept-Language"));
             response.add("locale", localeId);
             
             // Check if admin has the default password
