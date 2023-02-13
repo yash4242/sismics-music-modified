@@ -105,35 +105,7 @@ public class ImportAudioService extends AbstractExecutionThreadService {
                 importAudioList.add(importAudio);
                 
                 // Reading standard output to update import status
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    for (String line = reader.readLine(); line != null && isProcessRunning(process); line = reader.readLine()) {
-                        // Update progression
-                        Matcher matcher = PROGRESS_PATTERN.matcher(line);
-                        if (matcher.find()) {
-                            importAudio.setProgress(Float.valueOf(matcher.group(1)));
-                            importAudio.setTotalSize(matcher.group(2));
-                            importAudio.setDownloadSpeed(matcher.group(3));
-                        }
-                        
-                        // Check if the line is an error
-                        if (line.contains("ERROR")) {
-                            importAudio.setStatus(ImportAudio.Status.ERROR);
-                        }
-                        
-                        // New working file
-                        matcher = WORKING_FILE_PATTERN.matcher(line);
-                        if (matcher.find()) {
-                            File file = new File(matcher.group(1));
-                            String name = file.getName();
-                            if (!Strings.isNullOrEmpty(name)) {
-                                importAudio.addWorkingFiles(name);
-                            }
-                        }
-                        
-                        // Debug output
-                        importAudio.setMessage(importAudio.getMessage() + "\n" + line);
-                    }
-                }
+                utilException(process, importAudio);
                 
                 // The process has not been terminated properly
                 if (process.waitFor() != 0) {
@@ -162,6 +134,41 @@ public class ImportAudioService extends AbstractExecutionThreadService {
                 importAudio.setMessage(importAudio.getMessage() + "\n" + e.getMessage());
                 log.error("Error importing: " + importAudio, e);
             }
+        }
+    }
+
+    private void utilException(Process process, ImportAudio importAudio){
+        // Reading standard output to update import status
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            for (String line = reader.readLine(); line != null && isProcessRunning(process); line = reader.readLine()) {
+                // Update progression
+                Matcher matcher = PROGRESS_PATTERN.matcher(line);
+                if (matcher.find()) {
+                    importAudio.setProgress(Float.valueOf(matcher.group(1)));
+                    importAudio.setTotalSize(matcher.group(2));
+                    importAudio.setDownloadSpeed(matcher.group(3));
+                }
+                
+                // Check if the line is an error
+                if (line.contains("ERROR")) {
+                    importAudio.setStatus(ImportAudio.Status.ERROR);
+                }
+                
+                // New working file
+                matcher = WORKING_FILE_PATTERN.matcher(line);
+                if (matcher.find()) {
+                    File file = new File(matcher.group(1));
+                    String name = file.getName();
+                    if (!Strings.isNullOrEmpty(name)) {
+                        importAudio.addWorkingFiles(name);
+                    }
+                }
+                
+                // Debug output
+                importAudio.setMessage(importAudio.getMessage() + "\n" + line);
+            }
+        } catch (Exception e) {
+            log.error("Error: ", e);       
         }
     }
     
