@@ -41,7 +41,7 @@ public class LocaleUtil {
     public static String getLocaleIdFromAcceptLanguage(String acceptLanguageHeader) {
         String localeId = null;
         if (StringUtils.isNotBlank(acceptLanguageHeader)) {
-            acceptLanguageHeader = acceptLanguageHeader.replaceAll("-", "_");
+            acceptLanguageHeader = acceptLanguageHeader.replace("-", "_");
             localeId = acceptLanguageHeader.split(",")[0];
         }
         if (StringUtils.isNotBlank(localeId)) {
