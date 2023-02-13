@@ -75,7 +75,7 @@ public class RequestContextFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest httpServletRequest, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         Handle handle = null;
         try {
             handle = DBIF.get().open();
@@ -88,12 +88,12 @@ public class RequestContextFilter implements Filter {
         handle.begin();
 
         // Disable transaction isolation for GET requests
-        if ("GET".equals(((HttpServletRequest) request).getMethod())) {
+        if ("GET".equals(((HttpServletRequest) httpServletRequest).getMethod())) {
             handle.setTransactionIsolation(TransactionIsolationLevel.READ_UNCOMMITTED);
         }
 
         try {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(httpServletRequest, response);
         } catch (Exception e) {
             ThreadLocalContext.cleanup();
             
