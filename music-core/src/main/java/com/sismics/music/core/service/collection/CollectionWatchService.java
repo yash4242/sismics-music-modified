@@ -50,6 +50,7 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
     private List<Directory> watchedDirectoryList = Collections.synchronizedList(new ArrayList<Directory>());
     
     public CollectionWatchService() {
+        // function not implemented by authors
     }
 
     @Override

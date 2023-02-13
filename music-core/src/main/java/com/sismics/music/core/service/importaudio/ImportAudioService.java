@@ -70,10 +70,12 @@ public class ImportAudioService extends AbstractExecutionThreadService {
     private ExecutorService syncExecutor = Executors.newSingleThreadExecutor();
     
     public ImportAudioService() {
+        // function not implemented by authors
     }
 
     @Override
     protected void startUp() {
+        // function not implemented by authors
     }
     
 
@@ -180,6 +182,7 @@ public class ImportAudioService extends AbstractExecutionThreadService {
     
     @Override
     protected void shutDown() {
+        // function not implemented by authors
     }
 
     /**
