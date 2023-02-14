@@ -70,10 +70,10 @@ public class TokenBasedSecurityFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         // Get the value of the client authentication token
-        HttpServletRequest request = (HttpServletRequest) req;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) req;
         String authToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
+        if (httpServletRequest.getCookies() != null) {
+            for (Cookie cookie : httpServletRequest.getCookies()) {
                 if (COOKIE_NAME.equals(cookie.getName())) {
                     authToken = cookie.getValue();
                 }
@@ -88,12 +88,12 @@ public class TokenBasedSecurityFilter implements Filter {
         }
         
         if (authenticationToken == null) {
-            injectAnonymousUser(request);
+            injectAnonymousUser(httpServletRequest);
         } else {
             // Check if the token is still valid
             if (isTokenExpired(authenticationToken)) {
                 try {
-                    injectAnonymousUser(request);
+                    injectAnonymousUser(httpServletRequest);
 
                     // Destroy the expired token
                     authenticationTokenDao.delete(authToken);
@@ -107,18 +107,18 @@ public class TokenBasedSecurityFilter implements Filter {
                 UserDao userDao = new UserDao();
                 User user = userDao.getActiveById(authenticationToken.getUserId());
                 if (user != null) {
-                    injectAuthenticatedUser(request, user);
+                    injectAuthenticatedUser(httpServletRequest, user);
                     
                     // Update the last connection date
                     authenticationTokenDao.updateLastConnectionDate(authenticationToken.getId());
                     TransactionUtil.commit();
                 } else {
-                    injectAnonymousUser(request);
+                    injectAnonymousUser(httpServletRequest);
                 }
             }
         }
         
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(httpServletRequest, response);
     }
     
     /**

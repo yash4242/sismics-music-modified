@@ -49,14 +49,17 @@ public class CollectionService extends AbstractScheduledService {
     private static final Logger log = LoggerFactory.getLogger(CollectionService.class);
 
     public CollectionService() {
+        // function not implemented by authors
     }
 
     @Override
     protected void startUp() {
+        // function not implemented by authors
     }
 
     @Override
     protected void shutDown() {
+        // function not implemented by authors
     }
 
     @Override
