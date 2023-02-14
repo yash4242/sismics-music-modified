@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
  * 
  * @author jtremeaux
  */
-public class ConfigUtil {
+public final class ConfigUtil {
     /**
      * Returns the textual value of a configuration parameter.
      * 
@@ -61,5 +61,9 @@ public class ConfigUtil {
         String value = getConfigStringValue(configType);
         
         return Boolean.parseBoolean(value);
+    }
+
+    private ConfigUtil() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }
