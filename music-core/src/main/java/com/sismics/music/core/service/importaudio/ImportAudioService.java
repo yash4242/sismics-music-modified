@@ -13,7 +13,7 @@ import com.sismics.music.core.service.importaudio.ImportAudio.Status;
 import com.sismics.music.core.util.DirectoryUtil;
 import com.sismics.util.FilenameUtil;
 import com.sismics.util.mime.MimeType;
-import com.sismics.util.mime.MimeTypeUtil;
+// import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.lang.StringUtils;
@@ -331,7 +331,7 @@ public class ImportAudioService extends AbstractExecutionThreadService {
      * @param file File
      */
     public void importFile(File file) throws Exception {
-        String mimeType = MimeTypeUtil.guessMimeType(file);
+        String mimeType = MimeType.guessMimeType(file);
         String ext = Files.getFileExtension(file.getName()).toLowerCase();
         String importDir = DirectoryUtil.getImportAudioDirectory().getAbsolutePath();
         
