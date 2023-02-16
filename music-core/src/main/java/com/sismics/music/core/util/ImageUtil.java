@@ -202,23 +202,9 @@ public class ImageUtil {
      * @return Mosaic
      */
     public static BufferedImage makeMosaic(List<BufferedImage> imageList, int size) throws Exception {
-        if (imageList.size() == 0) {
-            // Return a 1x1 pixel transparent image
-            BufferedImage mosaicImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D mosaicGraphic = mosaicImage.createGraphics();
-            mosaicGraphic.setColor(new Color(0, 0, 0, 0));
-            mosaicGraphic.fillRect(0, 0, 1, 1);
-            return mosaicImage;
-        }
-        
-        if (imageList.size() == 1) {
-            return imageList.get(0);
-        }
-        
-        if (imageList.size() > 4) {
-            imageList = imageList.subList(0, 4);
-        }
-        
+        BufferedImage utilImage = utilMakeMosaic(imageList);
+        if (utilImage != null)
+            return utilImage;
         BufferedImage mosaicImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
         Graphics2D mosaicGraphic = mosaicImage.createGraphics();
         
@@ -238,5 +224,25 @@ public class ImageUtil {
         }
         
         return mosaicImage;
+    }
+
+    private static BufferedImage utilMakeMosaic(List<BufferedImage> imageList){
+        if (imageList.size() == 0) {
+            // Return a 1x1 pixel transparent image
+            BufferedImage mosaicImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D mosaicGraphic = mosaicImage.createGraphics();
+            mosaicGraphic.setColor(new Color(0, 0, 0, 0));
+            mosaicGraphic.fillRect(0, 0, 1, 1);
+            return mosaicImage;
+        }
+        
+        if (imageList.size() == 1) {
+            return imageList.get(0);
+        }
+        
+        if (imageList.size() > 4) {
+            imageList = imageList.subList(0, 4);
+        }
+        return null;
     }
 }

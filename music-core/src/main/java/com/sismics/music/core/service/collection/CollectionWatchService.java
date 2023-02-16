@@ -138,22 +138,7 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
                 final Directory directory = getParentDirectory(path);
                 Path directoryPath = Paths.get(directory.getLocation());
                 
-                if (kind == ENTRY_CREATE) {
-                    if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
-                        // Watch the new directory if it's not too deep, and index it fully
-                        if (path.getNameCount() - directoryPath.getNameCount() == 1) {
-                            log.info("New directory created, watching and indexing it: " + path);
-                            watchPath(path);
-                            indexFolder(directory, path);
-                        }
-                    } else {
-                        indexNewFile(directory, path);
-                    }
-                }
-                
-                if (kind == ENTRY_DELETE) {
-                    pathRemoved(directory, path);
-                }
+                utilRun(kind, path, directoryPath, directory);
             }
             
             cleanupOrphans();
@@ -161,6 +146,25 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
             if (!watchKey.reset()) {
                 watchKeyMap.remove(watchKey);
             }
+        }
+    }
+
+    private void utilRun(WatchEvent.Kind<Path> kind, Path path, Path directoryPath, Directory directory) throws Exception{
+        if (kind == ENTRY_CREATE) {
+            if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+                // Watch the new directory if it's not too deep, and index it fully
+                if (path.getNameCount() - directoryPath.getNameCount() == 1) {
+                    log.info("New directory created, watching and indexing it: " + path);
+                    watchPath(path);
+                    indexFolder(directory, path);
+                }
+            } else {
+                indexNewFile(directory, path);
+            }
+        }
+        
+        if (kind == ENTRY_DELETE) {
+            pathRemoved(directory, path);
         }
     }
     
