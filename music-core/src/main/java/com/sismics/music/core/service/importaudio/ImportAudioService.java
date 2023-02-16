@@ -148,7 +148,7 @@ public class ImportAudioService extends AbstractExecutionThreadService {
                 importAudioList.add(importAudio);
                 
                 // Reading standard output to update import status
-                utilException(process, importAudio);
+                utilRun(process, importAudio);
                 
                 // The process has not been terminated properly
                 if (process.waitFor() != 0) {
@@ -180,7 +180,7 @@ public class ImportAudioService extends AbstractExecutionThreadService {
         }
     }
 
-    private void utilException(Process process, ImportAudio importAudio){
+    private void utilRun(Process process, ImportAudio importAudio){
         // Reading standard output to update import status
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             for (String line = reader.readLine(); line != null && isProcessRunning(process); line = reader.readLine()) {
