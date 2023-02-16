@@ -235,29 +235,33 @@ public class ImportResource extends BaseResource {
         for (ImportAudioFile importedFile : importedFileList) {
             JsonObjectBuilder item = Json.createObjectBuilder()
                     .add("file", importedFile.getFile().getName());
-            if (importedFile.getTitle() != null) {
-                item.add("title", importedFile.getTitle());
-            }
-            if (importedFile.getAlbum() != null) {
-                item.add("album", importedFile.getAlbum());
-            }
-            if (importedFile.getArtist() != null) {
-                item.add("artist", importedFile.getArtist());
-            }
-            if (importedFile.getAlbumArtist() != null) {
-                item.add("albumArtist", importedFile.getAlbumArtist());
-            }
-            if (importedFile.getOrder() != null) {
-                item.add("order", importedFile.getOrder());
-            }
-            if (importedFile.getYear() != null) {
-                item.add("year", importedFile.getYear());
-            }
+            utilList(importedFile, item);
             items.add(item);
         }
         response.add("files", items);
         
         return renderJson(response);
+    }
+
+    private void utilList(ImportAudioFile importedFile, JsonObjectBuilder item) {
+        if (importedFile.getTitle() != null) {
+            item.add("title", importedFile.getTitle());
+        }
+        if (importedFile.getAlbum() != null) {
+            item.add("album", importedFile.getAlbum());
+        }
+        if (importedFile.getArtist() != null) {
+            item.add("artist", importedFile.getArtist());
+        }
+        if (importedFile.getAlbumArtist() != null) {
+            item.add("albumArtist", importedFile.getAlbumArtist());
+        }
+        if (importedFile.getOrder() != null) {
+            item.add("order", importedFile.getOrder());
+        }
+        if (importedFile.getYear() != null) {
+            item.add("year", importedFile.getYear());
+        }
     }
     
     /**
