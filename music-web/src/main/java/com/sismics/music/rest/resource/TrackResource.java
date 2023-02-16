@@ -274,14 +274,9 @@ public class TrackResource extends BaseResource {
         album = Validation.length(album, "album", 1, 1000);
         artist = Validation.length(artist, "artist", 1, 1000);
         albumArtist = Validation.length(albumArtist, "album_artist", 1, 1000);
-        Integer year = null;
-        if (yearStr != null) {
-            year = Validation.integer(yearStr, "year");
-        }
-        Integer order = null;
-        if (orderStr != null) {
-            order = Validation.integer(orderStr, "order");
-        }
+        
+        Integer year = utilUpdateYear(yearStr);
+        Integer order = utilUpdateOrder(orderStr);
 
         TrackDao trackDao = new TrackDao();
         ArtistDao artistDao = new ArtistDao();
@@ -347,5 +342,21 @@ public class TrackResource extends BaseResource {
         
         // Always return OK
         return okJson();
+    }
+
+    private Integer utilUpdateYear(String yearStr) {
+        Integer year = null;
+        if (yearStr != null) {
+            year = Validation.integer(yearStr, "year");
+        }
+        return year;
+    }
+
+    private Integer utilUpdateOrder(String orderStr) {
+        Integer order = null;
+        if (orderStr != null) {
+            order = Validation.integer(orderStr, "order");
+        }
+        return order;
     }
 }
