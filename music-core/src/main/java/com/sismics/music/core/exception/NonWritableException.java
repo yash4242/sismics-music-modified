@@ -5,11 +5,15 @@ package com.sismics.music.core.exception;
  * 
  * @author bgamard
  */
-public class NonWritableException extends Exception {
+public class NonWritableException extends Exception
+{
 
     private static final long serialVersionUID = 1L;
 
-    public NonWritableException(Throwable cause) {
+    public NonWritableException(Throwable cause)
+    {
         super(cause);
     }
 }
+
+
