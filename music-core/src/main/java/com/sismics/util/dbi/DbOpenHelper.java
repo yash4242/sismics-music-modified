@@ -13,6 +13,10 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+
 /**
  * A helper to update the database incrementally.
  *
@@ -80,7 +84,7 @@ public abstract class DbOpenHelper {
      * 
      * @param version Version number
      */
-    protected void executeAllScript(final int version) throws Exception {
+    protected void executeAllScript(final int version) throws Exception,IOException, URISyntaxException {
         List<String> fileNameList = ResourceUtil.list(getClass(), "/db/update/", (dir, name) -> {
             String versionString = String.format("%03d", version);
             return name.matches("dbupdate-" + versionString + "-\\d+\\.sql");
