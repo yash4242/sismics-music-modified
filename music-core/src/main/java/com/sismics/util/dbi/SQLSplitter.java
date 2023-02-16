@@ -31,26 +31,7 @@ public class SQLSplitter implements Iterable<CharSequence> {
                 ender = '`';
                 break;
             case '$': {
-                int quoteEnd = start + 1;
-                for (; s.charAt(quoteEnd) != '$'; ++quoteEnd)
-                    if (quoteEnd >= s.length())
-                        return quoteEnd;
-                int i = quoteEnd + 1;
-                while (i < s.length()) {
-                    if (s.charAt(i) == '$') {
-                        boolean match = true;
-                        for (int j = start; j <= quoteEnd && i < s.length(); ++j, ++i) {
-                            if (s.charAt(i) != s.charAt(j)) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (match)
-                            return i;
-                    } else
-                        ++i;
-                }
-                return i;
+                return utilConsumeQuoteDollar(start, s);
             }
 
             default:
@@ -71,6 +52,29 @@ public class SQLSplitter implements Iterable<CharSequence> {
                 return i + 1;
         }
         return s.length();
+    }
+
+    private static int utilConsumeQuoteDollar(int start, final CharSequence s) {
+        int quoteEnd = start + 1;
+        for (; s.charAt(quoteEnd) != '$'; ++quoteEnd)
+            if (quoteEnd >= s.length())
+                return quoteEnd;
+        int i = quoteEnd + 1;
+        while (i < s.length()) {
+            if (s.charAt(i) == '$') {
+                boolean match = true;
+                for (int j = start; j <= quoteEnd && i < s.length(); ++j, ++i) {
+                    if (s.charAt(i) != s.charAt(j)) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match)
+                    return i;
+            } else
+                ++i;
+        }
+        return i;
     }
 
     private static boolean isNewLine(char c) {
