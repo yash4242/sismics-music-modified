@@ -62,7 +62,7 @@ public class AuthenticationTokenDao {
      * 
      * @param authenticationTokenId Authentication token ID
      */
-    public void delete(String authenticationTokenId) throws Exception {
+    public void delete(String authenticationTokenId) throws TokenNotFoundException {
         final Handle handle = ThreadLocalContext.get().getHandle();
         AuthenticationToken authenticationToken = get(authenticationTokenId);
         if (authenticationToken != null) {

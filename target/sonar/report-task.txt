@@ -2,5 +2,5 @@ projectKey=swe
 serverUrl=http://localhost:9000
 serverVersion=9.9.0.65466
 dashboardUrl=http://localhost:9000/dashboard?id=swe
-ceTaskId=AYZZpFNkE2GygYrhZka6
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AYZZpFNkE2GygYrhZka6
+ceTaskId=AYZaYLCR7PxWk62qSef5
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AYZaYLCR7PxWk62qSef5
