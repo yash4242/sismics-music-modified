@@ -49,7 +49,7 @@ public abstract class BaseResource {
      */
     protected boolean authenticate() {
         Principal principal = (Principal) httpServletRequest.getAttribute(TokenBasedSecurityFilter.PRINCIPAL_ATTRIBUTE);
-        if (principal != null && principal instanceof IPrincipal) {
+        if (principal instanceof IPrincipal) {
             this.principal = (IPrincipal) principal;
             return !this.principal.isAnonymous();
         } else {
@@ -75,7 +75,7 @@ public abstract class BaseResource {
      * @return True if the user has the privilege
      */
     protected boolean hasPrivilege(Privilege privilege) {
-        if (principal == null || !(principal instanceof UserPrincipal)) {
+        if (!(principal instanceof UserPrincipal)) {
             return false;
         }
         Set<String> privilegeSet = ((UserPrincipal) principal).getPrivilegeSet();

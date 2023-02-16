@@ -12,8 +12,6 @@ import com.sismics.music.core.model.dbi.Directory;
 import com.sismics.music.core.service.importaudio.ImportAudio.Status;
 import com.sismics.music.core.util.DirectoryUtil;
 import com.sismics.util.FilenameUtil;
-// import com.sismics.util.mime.MimeType;
-// import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.lang.StringUtils;

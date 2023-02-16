@@ -83,7 +83,6 @@ public class CollectionVisitor extends SimpleFileVisitor<Path> {
             Files.walkFileTree(rootPath, EnumSet.noneOf(FileVisitOption.class), 2, this);
         } catch (IOException e) {
             log.error("Cannot read from directory: " + rootDirectory.getLocation(), e);
-            return;
         }
     }
 

@@ -16,7 +16,7 @@ import java.util.List;
 public class TestLyricUtil {
 
     @Test
-    @Ignore
+    @Ignore("Test ignored by the authors")
     public void getLyrics() throws Exception {
         List<String> lyrics = LyricUtil.getLyrics("John Lennon", "Imagine");
         Assert.assertEquals(1, lyrics.size());

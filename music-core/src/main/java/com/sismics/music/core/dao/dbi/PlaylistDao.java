@@ -123,23 +123,4 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
                 .setDefaultPlaylist(true)
                 .setUserId(userId));
     }
-
-    /**
-     * Assemble the query results.
-     *
-     * @param resultList Query results as a table
-     * @return Query results as a list of domain objects
-     */
-    private List<PlaylistDto> assembleResultList(List<Object[]> resultList) {
-        List<PlaylistDto> playlistDtoList = new ArrayList<>();
-        for (Object[] o : resultList) {
-            int i = 0;
-            PlaylistDto playlistDto = new PlaylistDto();
-            playlistDto.setId((String) o[i++]);
-            playlistDto.setName((String) o[i++]);
-            playlistDto.setUserId((String) o[i]);
-            playlistDtoList.add(playlistDto);
-        }
-        return playlistDtoList;
-    }
 }

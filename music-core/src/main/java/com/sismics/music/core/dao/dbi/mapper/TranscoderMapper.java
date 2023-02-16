@@ -38,7 +38,7 @@ public class TranscoderMapper extends BaseResultSetMapper<Transcoder> {
                 r.getString(columns[column++]),
                 r.getString(columns[column++]),
                 r.getTimestamp(columns[column++]),
-                r.getTimestamp(columns[column++])
+                r.getTimestamp(columns[column])
                 );
     }
 }

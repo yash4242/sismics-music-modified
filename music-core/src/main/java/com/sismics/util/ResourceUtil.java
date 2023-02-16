@@ -41,12 +41,13 @@ public class ResourceUtil {
             dirUrl = clazz.getClassLoader().getResource(className);
         }
 
+        String slash = "/";
         if (dirUrl.getProtocol().equals("jar")) {
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
             if (!path.endsWith("/")) {
-                path = path + "/";
+                path = path + slash;
             }
             
             // Extract the JAR path

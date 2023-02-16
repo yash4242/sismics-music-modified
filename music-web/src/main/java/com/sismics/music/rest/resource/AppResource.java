@@ -80,7 +80,7 @@ public class AppResource extends BaseResource {
         // Get the memory appender
         Logger logger = Logger.getRootLogger();
         Appender appender = logger.getAppender("MEMORY");
-        if (appender == null || !(appender instanceof MemoryAppender)) {
+        if (!(appender instanceof MemoryAppender)) {
             throw new ServerException("ServerError", "MEMORY appender not configured");
         }
         MemoryAppender memoryAppender = (MemoryAppender) appender;

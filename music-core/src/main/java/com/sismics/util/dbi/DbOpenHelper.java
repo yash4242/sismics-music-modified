@@ -109,7 +109,6 @@ public abstract class DbOpenHelper {
                 continue;
             }
             
-//            String formatted = formatter.format(sql);
             try {
                 log.trace(sql);
                 handle.update(sql);
@@ -130,15 +129,6 @@ public abstract class DbOpenHelper {
     
     public abstract void onUpgrade(int oldVersion, int newVersion) throws Exception;
 
-    /**
-     * Returns a List of all Exceptions which occured during the export.
-     *
-     * @return A List containig the Exceptions occured during the export
-     */
-    public List<?> getExceptions() {
-        return exceptions;
-    }
-
     public void setHaltOnError(boolean haltOnError) {
         this.haltOnError = haltOnError;
     }
@@ -149,6 +139,5 @@ public abstract class DbOpenHelper {
      * @param format True to format
      */
     public void setFormat(boolean format) {
-//        this.formatter = (format ? FormatStyle.DDL : FormatStyle.NONE).getFormatter();
     }
 }

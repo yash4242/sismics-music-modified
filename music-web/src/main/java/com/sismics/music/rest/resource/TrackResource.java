@@ -58,7 +58,7 @@ public class TrackResource extends BaseResource {
     public void stream(
             @HeaderParam("Range") final String range,
             @PathParam("id") final String id,
-            @Suspended final AsyncResponse asyncResponse) throws Exception {
+            @Suspended final AsyncResponse asyncResponse) {
         if (!authenticate()) {
             asyncResponse.resume(Response.status(Status.FORBIDDEN).build());
             return;

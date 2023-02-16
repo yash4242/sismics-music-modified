@@ -246,7 +246,7 @@ public class LastFmService extends AbstractScheduledService {
                 }
             }
             page++;
-        } while (result != null && page <= result.getTotalPages());
+        } while (page <= result.getTotalPages());
 
         log.info(MessageFormat.format("Retrieved {0} tracks from Last.fm, updated {1} play counts in the local collection", lastFmCount, localCount));
     }
@@ -285,7 +285,7 @@ public class LastFmService extends AbstractScheduledService {
                 }
             }
             page++;
-        } while (result != null && page <= result.getTotalPages());
+        } while (page <= result.getTotalPages());
 
         log.info(MessageFormat.format("Retrieved {0} loved tracks from Last.fm, imported {1} into the local collection", lastFmCount, localCount));
     }

@@ -135,11 +135,11 @@ public class TokenBasedSecurityFilter implements Filter {
         final long now = new Date().getTime();
         final long creationDate = authenticationToken.getCreateDate().getTime();
         if (authenticationToken.isLongLasted()) {
-            return now >= creationDate + ((long) TOKEN_LONG_LIFETIME) * 1000L;
+            return now >= creationDate + ( TOKEN_LONG_LIFETIME) * 1000L;
         } else {
             long date = authenticationToken.getLastConnectionDate() != null ?
                     authenticationToken.getLastConnectionDate().getTime() : creationDate;
-            return now >= date + ((long) TOKEN_SESSION_LIFETIME) * 1000L;
+            return now >= date + (TOKEN_SESSION_LIFETIME) * 1000L;
         }
     }
 

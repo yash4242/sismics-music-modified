@@ -13,7 +13,7 @@ import java.util.UUID;
  */
 public class ImportAudio {
     
-    public static enum Status {
+    public enum Status {
         PENDING,
         INPROGRESS,
         DONE,

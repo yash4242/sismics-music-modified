@@ -244,7 +244,7 @@ public class TestUserResource extends BaseJerseyTest {
      * Test the user authentication to Last.fm.
      */
     @Test
-    @Ignore
+    @Ignore("Test ignored by authors")
     public void testUserLastFmRegistration() {
         // Create and login user
         createUser("user_lastfm0");

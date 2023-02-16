@@ -47,7 +47,7 @@ public class TestImportResource extends BaseMusicTest {
      *
      */
     @Test
-    @Ignore // youtube-dl is not installed on Travis
+    @Ignore("youtube-dl is not installed on Travis")
     public void shouldImportFromWeb() throws Exception {
         // Login users
         String adminAuthenticationToken = login("admin", "admin", false);
@@ -100,8 +100,6 @@ public class TestImportResource extends BaseMusicTest {
                 files = json.getJsonArray("files");
                 assertEquals(0, files.size());
             }
-            
-            Thread.sleep(200);
         }
         
         // Admin lists imported files
@@ -128,9 +126,6 @@ public class TestImportResource extends BaseMusicTest {
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .post(Entity.form(new Form()), JsonObject.class);
         
-        // Wait for watching service to index our new music
-        Thread.sleep(3000);
-        
         // Admin import a new URL
         json = target().path("/import").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
@@ -140,9 +135,6 @@ public class TestImportResource extends BaseMusicTest {
                         .param("format", "mp3")), JsonObject.class);
         assertEquals("ok", json.getString("status"));
 
-        // Wait for the process to start
-        Thread.sleep(1000);
-        
         // Admin check import progession
         json = target().path("/import/progress").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
@@ -155,9 +147,6 @@ public class TestImportResource extends BaseMusicTest {
         target().path("/import/progress/" + imports.getJsonObject(0).getString("id") + "/kill").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
                 .post(Entity.form(new Form()), JsonObject.class);
-        
-        // Wait for the process to be killed
-        Thread.sleep(3000);
         
         // Admin check import progession
         json = target().path("/import/progress").request()
@@ -174,7 +163,7 @@ public class TestImportResource extends BaseMusicTest {
      *
      */
     @Test
-    @Ignore // youtube-dl is not installed on Travis
+    @Ignore("youtube-dl is not installed on Travis")
     public void shouldRetryImport() throws Exception {
         // Login users
         String adminAuthenticationToken = login("admin", "admin", false);
@@ -203,8 +192,6 @@ public class TestImportResource extends BaseMusicTest {
         assertEquals(1, imports.size());
         assertEquals("INPROGRESS", imports.getJsonObject(0).getString("status"));
         
-        Thread.sleep(5000);
-        
         // Admin checks import progression
         json = target().path("/import/progress").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
@@ -228,8 +215,6 @@ public class TestImportResource extends BaseMusicTest {
         assertEquals(1, imports.size());
         assertEquals("INPROGRESS", imports.getJsonObject(0).getString("status"));
         
-        Thread.sleep(5000);
-        
         // Admin checks import progression
         json = target().path("/import/progress").request()
                 .cookie(TokenBasedSecurityFilter.COOKIE_NAME, adminAuthenticationToken)
@@ -241,7 +226,7 @@ public class TestImportResource extends BaseMusicTest {
     }
     
     @Test
-    @Ignore // youtube-dl is not installed on Travis
+    @Ignore("youtube-dl is not installed on Travis")
     public void shouldTestDependencies() throws Exception {
         // Login users
         String adminAuthenticationToken = login("admin", "admin", false);
@@ -364,9 +349,6 @@ public class TestImportResource extends BaseMusicTest {
                 .build());
         assertIsOk();
 
-        // Wait for watching service to index our new music
-        Thread.sleep(3000);
-
         // Check that the track is properly added, and is listed as most recent
         GET("/album", ImmutableMap.of(
                 "sort_column", "1",
@@ -385,7 +367,7 @@ public class TestImportResource extends BaseMusicTest {
      *
      */
     @Test
-    @Ignore // TODO Fixme
+    @Ignore("TODO Fixme")
     public void shouldSuggestTagWithId3() throws Exception {
         // Login users
         loginAdmin();

@@ -61,7 +61,7 @@ public class TestAlbumResource extends BaseMusicTest {
      *
      */
     @Test
-    @Ignore // TODO Fixme
+    @Ignore("TODO Fixme")
     public void shouldUploadAlbumArtDirectly() throws Exception {
         // Login users
         String adminAuthenticationToken = loginAdmin();

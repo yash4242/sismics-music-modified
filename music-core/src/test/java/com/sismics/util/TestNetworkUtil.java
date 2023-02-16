@@ -12,7 +12,7 @@ import org.junit.Test;
 public class TestNetworkUtil {
 
     @Test
-    @Ignore
+    @Ignore("Test ignored by the authors")
     public void testUpnp() throws Exception {
         Assert.assertTrue(NetworkUtil.mapTcpPort(4040));
     }

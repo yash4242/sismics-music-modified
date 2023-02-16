@@ -38,7 +38,7 @@ public class TestAppResource extends BaseMusicTest {
      * Test the map port resource.
      */
     @Test
-    @Ignore
+    @Ignore("Ignored by authors")
     public void testMapPortResource() {
         // Login admin
         loginAdmin();
@@ -52,7 +52,7 @@ public class TestAppResource extends BaseMusicTest {
      * Test the log resource.
      */
     @Test
-    @Ignore // TODO Fixme
+    @Ignore("TODO Fixme")
     public void testLogResource() {
         // Login admin
         loginAdmin();

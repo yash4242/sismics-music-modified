@@ -33,7 +33,7 @@ public class ImageUtil {
         PNG,
 
         BMP
-    };
+    }
     
     // Related to alpha channel removal
     private static final int[] RGB_MASKS = {0xFF0000, 0xFF00, 0xFF};
@@ -158,7 +158,7 @@ public class ImageUtil {
         ImageWriter writer = null;
         FileImageOutputStream output = null;
         try {
-            writer = (ImageWriter) iter.next();
+            writer = iter.next();
             ImageWriteParam iwp = writer.getDefaultWriteParam();
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             iwp.setCompressionQuality(1.f);
@@ -248,9 +248,6 @@ public class ImageUtil {
             return imageList.get(0);
         }
         
-        if (imageList.size() > 4) {
-            imageList = imageList.subList(0, 4);
-        }
         return null;
     }
 }
