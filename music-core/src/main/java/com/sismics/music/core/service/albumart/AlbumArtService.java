@@ -7,6 +7,7 @@ import com.sismics.music.core.util.DirectoryUtil;
 import com.sismics.music.core.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sismics.music.core.exception.UnknownFileFormatException;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -36,7 +37,7 @@ public class AlbumArtService  {
     public void importAlbumArt(Album album, File originalFile, boolean copyOriginal) throws Exception {
         ImageUtil.FileType fileType = ImageUtil.getFileFormat(originalFile);
         if (fileType == null) {
-            throw new Exception("Unknown file format for picture " + originalFile.getName());
+            throw new UnknownFileFormatException("Unknown file format for picture " + originalFile.getName());
         }
         BufferedImage originalImage = ImageUtil.readImageWithoutAlphaChannel(originalFile);
         

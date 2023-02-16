@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ResourceBundle;
 
 /**
@@ -157,7 +158,7 @@ public class AppResource extends BaseResource {
      */
     @GET
     @Path("db")
-    public Response db() throws Exception {
+    public Response db() throws URISyntaxException {
         if (!DbUtil.isStarted()) {
             DbUtil.start();
         }
