@@ -12,7 +12,7 @@ import com.sismics.music.core.model.dbi.Directory;
 import com.sismics.music.core.service.importaudio.ImportAudio.Status;
 import com.sismics.music.core.util.DirectoryUtil;
 import com.sismics.util.FilenameUtil;
-import com.sismics.util.mime.MimeType;
+// import com.sismics.util.mime.MimeType;
 // import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -39,6 +39,49 @@ import java.util.stream.Collectors;
  * @author bgamard
  */
 public class ImportAudioService extends AbstractExecutionThreadService {
+
+    public static final String IMAGE_X_ICON = "image/x-icon";
+    
+    public static final String IMAGE_PNG = "image/png";
+    
+    public static final String IMAGE_JPEG = "image/jpeg";
+    
+    public static final String IMAGE_GIF = "image/gif";
+    
+    public static final String APPLICATION_ZIP = "application/zip";
+
+    public static String guessMimeType(File file) throws Exception {
+        InputStream is = null;
+        try {
+            is = new FileInputStream(file);
+            byte[] headerBytes = new byte[64];
+            int readCount = is.read(headerBytes, 0, headerBytes.length);
+            if (readCount <= 0) {
+                throw new Exception("Cannot read input file");
+            }
+            String header = new String(headerBytes, "US-ASCII");
+            
+            if (header.startsWith("PK")) {
+                return ImportAudioService.APPLICATION_ZIP;
+            } else if (header.startsWith("GIF87a") || header.startsWith("GIF89a")) {
+                return ImportAudioService.IMAGE_GIF;
+            } else if (headerBytes[0] == ((byte) 0xff) && headerBytes[1] == ((byte) 0xd8)) {
+                return ImportAudioService.IMAGE_JPEG;
+            } else if (headerBytes[0] == ((byte) 0x89) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x4e) && headerBytes[3] == ((byte) 0x47) &&
+                    headerBytes[4] == ((byte) 0x0d) && headerBytes[5] == ((byte) 0x0a) && headerBytes[6] == ((byte) 0x1a) && headerBytes[7] == ((byte) 0x0a)) {
+                return ImportAudioService.IMAGE_PNG;
+            } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x01) && headerBytes[3] == ((byte) 0x00)) {
+                return ImportAudioService.IMAGE_X_ICON;
+            }
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Logger.
      */
@@ -331,11 +374,11 @@ public class ImportAudioService extends AbstractExecutionThreadService {
      * @param file File
      */
     public void importFile(File file) throws Exception {
-        String mimeType = MimeType.guessMimeType(file);
+        String mimeType = guessMimeType(file);
         String ext = Files.getFileExtension(file.getName()).toLowerCase();
         String importDir = DirectoryUtil.getImportAudioDirectory().getAbsolutePath();
         
-        if (MimeType.APPLICATION_ZIP.equals(mimeType)) {
+        if (APPLICATION_ZIP.equals(mimeType)) {
             log.info("Importing a ZIP file");
             // It's a ZIP file, unzip accepted files in the import folder
             try (ZipArchiveInputStream archiveInputStream = new ZipArchiveInputStream(new FileInputStream(file), Charsets.UTF_8.name())) {
