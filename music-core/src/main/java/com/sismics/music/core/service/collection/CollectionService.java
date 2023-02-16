@@ -205,6 +205,34 @@ public class CollectionService extends AbstractScheduledService {
             artistDao.create(albumArtist);
         }
         
+        utilReadTrackTag(tag, track, albumArtist, file, audioFile,artistDao);
+
+        // Track album
+        AlbumDao albumDao = new AlbumDao();
+        Album album = albumDao.getActiveByArtistIdAndName(albumArtist.getId(), albumName);
+        if (album == null) {
+            // Import album art
+            AlbumArtImporter albumArtImporter = new AlbumArtImporter();
+            File albumArtFile = albumArtImporter.scanDirectory(file.getParent());
+
+            album = new Album();
+            album.setArtistId(albumArtist.getId());
+            album.setDirectoryId(rootDirectory.getId());
+            album.setName(albumName);
+            album.setLocation(file.getParent().toString());
+            if (albumArtFile != null) {
+                // TODO Remove this, albumarts are scanned separately
+                AppContext.getInstance().getAlbumArtService().importAlbumArt(album, albumArtFile, false);
+            }
+            Date updateDate = getDirectoryUpdateDate(parentPath);
+            album.setCreateDate(updateDate);
+            album.setUpdateDate(updateDate);
+            albumDao.create(album);
+        }
+        track.setAlbumId(album.getId());
+    }
+
+    private void utilReadTrackTag(Tag tag, Track track, Artist albumArtist, Path file, AudioFile audioFile, ArtistDao artistDao){
         if (tag == null) {
             // No tag available, use filename as title and album artist as artist, and guess the rest
             track.setTitle(Files.getNameWithoutExtension(file.getFileName().toString()));
@@ -252,30 +280,6 @@ public class CollectionService extends AbstractScheduledService {
             }
             track.setArtistId(artist.getId());
         }
-
-        // Track album
-        AlbumDao albumDao = new AlbumDao();
-        Album album = albumDao.getActiveByArtistIdAndName(albumArtist.getId(), albumName);
-        if (album == null) {
-            // Import album art
-            AlbumArtImporter albumArtImporter = new AlbumArtImporter();
-            File albumArtFile = albumArtImporter.scanDirectory(file.getParent());
-
-            album = new Album();
-            album.setArtistId(albumArtist.getId());
-            album.setDirectoryId(rootDirectory.getId());
-            album.setName(albumName);
-            album.setLocation(file.getParent().toString());
-            if (albumArtFile != null) {
-                // TODO Remove this, albumarts are scanned separately
-                AppContext.getInstance().getAlbumArtService().importAlbumArt(album, albumArtFile, false);
-            }
-            Date updateDate = getDirectoryUpdateDate(parentPath);
-            album.setCreateDate(updateDate);
-            album.setUpdateDate(updateDate);
-            albumDao.create(album);
-        }
-        track.setAlbumId(album.getId());
     }
 
     private Date getDirectoryUpdateDate(Path path) {
