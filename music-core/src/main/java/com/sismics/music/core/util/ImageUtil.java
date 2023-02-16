@@ -210,20 +210,28 @@ public class ImageUtil {
         
         int i = 0;
         for (BufferedImage image : imageList) {
-            if (i == 0 && imageList.size() == 3 || ((i == 0 || i == 1) && imageList.size() == 2)) {
-                image = Scalr.crop(image, (image.getWidth() - size / 2) / 2, 0, size / 2, image.getHeight());
-                mosaicGraphic.drawImage(image, null, size / 2 * i, 0);
-            }
-            if (imageList.size() == 4 || imageList.size() == 3 && (i == 1 || i == 2)) {
-                image = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, size / 2, Scalr.OP_ANTIALIAS);
-                mosaicGraphic.drawImage(image, null,
-                        imageList.size() == 3 && i > 0 || imageList.size() == 4 && i > 1 ? size / 2 : 0,
-                        imageList.size() == 3 && i == 1 || imageList.size() == 4 && i % 2 == 0 ? 0 : size / 2);
-            }
+            utilBufferedImageSize3(i, imageList, mosaicImage, size, mosaicGraphic);
+            utilBufferedImageSize4(i, imageList, mosaicImage, size, mosaicGraphic);
             i++;
         }
         
         return mosaicImage;
+    }
+
+    private static void utilBufferedImageSize3(int i, List<BufferedImage> imageList, BufferedImage image, int size, Graphics2D mosaicGraphic) throws Exception {
+        if (i == 0 && imageList.size() == 3 || ((i == 0 || i == 1) && imageList.size() == 2)) {
+            image = Scalr.crop(image, (image.getWidth() - size / 2) / 2, 0, size / 2, image.getHeight());
+            mosaicGraphic.drawImage(image, null, size / 2 * i, 0);
+        }
+    }
+
+    private static void utilBufferedImageSize4(int i, List<BufferedImage> imageList, BufferedImage image, int size, Graphics2D mosaicGraphic) throws Exception {
+        if (imageList.size() == 4 || imageList.size() == 3 && (i == 1 || i == 2)) {
+            image = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, size / 2, Scalr.OP_ANTIALIAS);
+            mosaicGraphic.drawImage(image, null,
+                    imageList.size() == 3 && i > 0 || imageList.size() == 4 && i > 1 ? size / 2 : 0,
+                    imageList.size() == 3 && i == 1 || imageList.size() == 4 && i % 2 == 0 ? 0 : size / 2);
+        }
     }
 
     private static BufferedImage utilMakeMosaic(List<BufferedImage> imageList){

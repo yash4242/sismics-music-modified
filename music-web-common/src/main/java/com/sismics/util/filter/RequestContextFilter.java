@@ -116,24 +116,28 @@ public class RequestContextFilter implements Filter {
 
         // No error processing the request : commit / rollback the current transaction depending on the HTTP code
         if (handle.isInTransaction()) {
-            HttpServletResponse r = (HttpServletResponse) response;
-            int statusClass = r.getStatus() / 100;
-            if (statusClass == 2 || statusClass == 3) {
-                try {
-                    handle.commit();
-                } catch (Exception e) {
-                    log.error("Error during commit", e);
-                    r.sendError(500);
-                }
-            } else {
-                handle.rollback();
-            }
+            utilDoFilter(response, handle);
+        }
+    }
 
+    private void utilDoFilter(ServletResponse response, Handle handle) throws IOException{
+        HttpServletResponse r = (HttpServletResponse) response;
+        int statusClass = r.getStatus() / 100;
+        if (statusClass == 2 || statusClass == 3) {
             try {
-                handle.close();
+                handle.commit();
             } catch (Exception e) {
-                log.error("Error closing JDBI handle", e);
+                log.error("Error during commit", e);
+                r.sendError(500);
             }
+        } else {
+            handle.rollback();
+        }
+
+        try {
+            handle.close();
+        } catch (Exception e) {
+            log.error("Error closing JDBI handle", e);
         }
     }
 }

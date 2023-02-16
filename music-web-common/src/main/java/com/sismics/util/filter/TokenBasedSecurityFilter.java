@@ -90,35 +90,39 @@ public class TokenBasedSecurityFilter implements Filter {
         if (authenticationToken == null) {
             injectAnonymousUser(httpServletRequest);
         } else {
-            // Check if the token is still valid
-            if (isTokenExpired(authenticationToken)) {
-                try {
-                    injectAnonymousUser(httpServletRequest);
-
-                    // Destroy the expired token
-                    authenticationTokenDao.delete(authToken);
-                } catch (Exception e) {
-                    if (log.isErrorEnabled()) {
-                        log.error(MessageFormat.format("Error deleting authentication token {0} ", authToken), e);
-                    }
-                }
-            } else {
-                // Check if the user is still valid
-                UserDao userDao = new UserDao();
-                User user = userDao.getActiveById(authenticationToken.getUserId());
-                if (user != null) {
-                    injectAuthenticatedUser(httpServletRequest, user);
-                    
-                    // Update the last connection date
-                    authenticationTokenDao.updateLastConnectionDate(authenticationToken.getId());
-                    TransactionUtil.commit();
-                } else {
-                    injectAnonymousUser(httpServletRequest);
-                }
-            }
+            utilDoFilter(authToken, authenticationTokenDao, authenticationToken, httpServletRequest);
         }
         
         filterChain.doFilter(httpServletRequest, response);
+    }
+
+    private void utilDoFilter (String authToken, AuthenticationTokenDao authenticationTokenDao, AuthenticationToken authenticationToken, HttpServletRequest httpServletRequest) {
+        // Check if the token is still valid
+        if (isTokenExpired(authenticationToken)) {
+            try {
+                injectAnonymousUser(httpServletRequest);
+
+                // Destroy the expired token
+                authenticationTokenDao.delete(authToken);
+            } catch (Exception e) {
+                if (log.isErrorEnabled()) {
+                    log.error(MessageFormat.format("Error deleting authentication token {0} ", authToken), e);
+                }
+            }
+        } else {
+            // Check if the user is still valid
+            UserDao userDao = new UserDao();
+            User user = userDao.getActiveById(authenticationToken.getUserId());
+            if (user != null) {
+                injectAuthenticatedUser(httpServletRequest, user);
+                
+                // Update the last connection date
+                authenticationTokenDao.updateLastConnectionDate(authenticationToken.getId());
+                TransactionUtil.commit();
+            } else {
+                injectAnonymousUser(httpServletRequest);
+            }
+        }
     }
     
     /**
