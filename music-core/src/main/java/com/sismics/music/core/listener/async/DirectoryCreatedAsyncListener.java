@@ -9,6 +9,7 @@ import com.sismics.music.core.service.collection.CollectionService;
 import com.sismics.music.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sismics.music.core.exception.DirectoryCreateNotUpdatedException;
 
 import java.text.MessageFormat;
 
@@ -29,7 +30,7 @@ public class DirectoryCreatedAsyncListener {
      * @param directoryCreatedAsyncEvent New directory created event
      */
     @Subscribe
-    public void onDirectoryCreated(final DirectoryCreatedAsyncEvent directoryCreatedAsyncEvent) throws Exception {
+    public void onDirectoryCreated(final DirectoryCreatedAsyncEvent directoryCreatedAsyncEvent) throws DirectoryCreateNotUpdatedException {
         if (log.isInfoEnabled()) {
             log.info("Directory created event: " + directoryCreatedAsyncEvent.toString());
         }

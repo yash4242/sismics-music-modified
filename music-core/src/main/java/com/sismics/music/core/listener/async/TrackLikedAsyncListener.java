@@ -10,6 +10,7 @@ import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.music.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sismics.music.core.exception.LastFmTrackLikedNotUpdatedException;
 
 import java.text.MessageFormat;
 
@@ -30,7 +31,7 @@ public class TrackLikedAsyncListener {
      * @param trackLikedAsyncEvent New directory created event
      */
     @Subscribe
-    public void onTrackLiked(final TrackLikedAsyncEvent trackLikedAsyncEvent) throws Exception {
+    public void onTrackLiked(final TrackLikedAsyncEvent trackLikedAsyncEvent) throws LastFmTrackLikedNotUpdatedException {
         if (log.isInfoEnabled()) {
             log.info("Track liked event: " + trackLikedAsyncEvent.toString());
         }

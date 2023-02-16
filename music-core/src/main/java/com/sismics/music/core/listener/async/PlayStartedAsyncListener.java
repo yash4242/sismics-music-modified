@@ -10,6 +10,7 @@ import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.music.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sismics.music.core.exception.PlayStartNotUpdatedException;
 
 /**
  * Play started listener.
@@ -28,7 +29,7 @@ public class PlayStartedAsyncListener {
      * @param playStartedEvent Play started event
      */
     @Subscribe
-    public void onPlayStarted(final PlayStartedEvent playStartedEvent) throws Exception {
+    public void onPlayStarted(final PlayStartedEvent playStartedEvent) throws PlayStartNotUpdatedException {
         if (log.isInfoEnabled()) {
             log.info("Play started event: " + playStartedEvent.toString());
         }

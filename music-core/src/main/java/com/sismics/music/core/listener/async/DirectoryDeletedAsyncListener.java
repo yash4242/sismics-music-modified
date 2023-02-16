@@ -9,6 +9,7 @@ import com.sismics.music.core.service.collection.CollectionService;
 import com.sismics.music.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sismics.music.core.exception.DirectoryDeleteNotUpdatedException;
 
 import java.text.MessageFormat;
 
@@ -29,7 +30,7 @@ public class DirectoryDeletedAsyncListener {
      * @param directoryDeletedAsyncEvent New directory deleted event
      */
     @Subscribe
-    public void onDirectoryDeleted(final DirectoryDeletedAsyncEvent directoryDeletedAsyncEvent) throws Exception {
+    public void onDirectoryDeleted(final DirectoryDeletedAsyncEvent directoryDeletedAsyncEvent) throws DirectoryDeleteNotUpdatedException {
         if (log.isInfoEnabled()) {
             log.info("Directory deleted event: " + directoryDeletedAsyncEvent.toString());
         }

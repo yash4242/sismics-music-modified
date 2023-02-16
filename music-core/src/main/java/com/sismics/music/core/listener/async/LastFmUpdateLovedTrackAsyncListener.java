@@ -9,6 +9,7 @@ import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.music.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.sismics.music.core.exception.LovedTrackNotUpdatedException;
 
 import java.text.MessageFormat;
 
@@ -29,7 +30,7 @@ public class LastFmUpdateLovedTrackAsyncListener {
      * @param lastFmUpdateLovedTrackAsyncEvent Update loved track event
      */
     @Subscribe
-    public void onLastFmUpdateLovedTrack(final LastFmUpdateLovedTrackAsyncEvent lastFmUpdateLovedTrackAsyncEvent) throws Exception {
+    public void onLastFmUpdateLovedTrack(final LastFmUpdateLovedTrackAsyncEvent lastFmUpdateLovedTrackAsyncEvent) throws LovedTrackNotUpdatedException {
         if (log.isInfoEnabled()) {
             log.info("Last.fm update loved track event: " + lastFmUpdateLovedTrackAsyncEvent.toString());
         }
