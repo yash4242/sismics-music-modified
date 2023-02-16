@@ -33,6 +33,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.sismics.music.core.exception.FileImportException;
+
 /**
  * Import audio service.
  *
@@ -325,12 +327,12 @@ public class ImportAudioService extends AbstractExecutionThreadService {
      * 
      * @param id ID
      */
-    public void retryImportAudio(String id) throws Exception {
+    public void retryImportAudio(String id) throws FileImportException {
         synchronized (importAudioList) {
             for (ImportAudio importAudio : importAudioList) {
                 if (importAudio.getId().equals(id)) {
                     if (importAudio.getStatus() != Status.ERROR) {
-                        throw new Exception("Import not retryable");
+                        throw new FileImportException("Import not retryable");
                     }
                     
                     importAudioList.remove(importAudio);
@@ -343,7 +345,7 @@ public class ImportAudioService extends AbstractExecutionThreadService {
             }
         }
         
-        throw new Exception("Import not found");
+        throw new FileImportException("Import not found");
     }
     
     /**
@@ -351,12 +353,12 @@ public class ImportAudioService extends AbstractExecutionThreadService {
      * 
      * @param id ID
      */
-    public void killImportAudio(String id) throws Exception {
+    public void killImportAudio(String id) throws FileImportException {
         synchronized (importAudioList) {
             for (ImportAudio importAudio : importAudioList) {
                 if (importAudio.getId().equals(id)) {
                     if (importAudio.getStatus() != Status.INPROGRESS || importAudio.getProcess() == null) {
-                        throw new Exception("Import not killable");
+                        throw new FileImportException("Import not killable");
                     }
                     
                     importAudio.getProcess().destroy();
@@ -365,7 +367,7 @@ public class ImportAudioService extends AbstractExecutionThreadService {
             }
         }
         
-        throw new Exception("Import not found");
+        throw new FileImportException("Import not found");
     }
     
     /**
