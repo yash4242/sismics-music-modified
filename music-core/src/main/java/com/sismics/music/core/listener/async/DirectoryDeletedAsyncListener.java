@@ -29,7 +29,7 @@ public class DirectoryDeletedAsyncListener {
      * @param directoryDeletedAsyncEvent New directory deleted event
      */
     @Subscribe
-    public void onDirectoryDeleted(final DirectoryDeletedAsyncEvent directoryDeletedAsyncEvent) {
+    public void onDirectoryDeleted(final DirectoryDeletedAsyncEvent directoryDeletedAsyncEvent) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("Directory deleted event: " + directoryDeletedAsyncEvent.toString());
         }

@@ -11,7 +11,7 @@ import com.sismics.util.EnvironmentUtil;
  * 
  * @author jtremeaux
  */
-public final class DirectoryUtil {
+public class DirectoryUtil {
     /**
      * Returns the base data directory.
      * 
@@ -22,7 +22,9 @@ public final class DirectoryUtil {
         if (StringUtils.isNotBlank(EnvironmentUtil.getMusicHome())) {
             // If the music.home property is set then use it
             baseDataDir = new File(EnvironmentUtil.getMusicHome());
-        } else if (EnvironmentUtil.isUnitTest()) {
+        }/* else if (false) {
+            // XXX inject a variable from context.xml or similar (#41)
+        }*/ else if (EnvironmentUtil.isUnitTest()) {
             // For unit testing, use a temporary directory
             baseDataDir = new File(System.getProperty("java.io.tmpdir"));
         } else {
@@ -91,9 +93,5 @@ public final class DirectoryUtil {
             dataSubDirectory.mkdirs();
         }
         return dataSubDirectory;
-    }
-
-    private DirectoryUtil() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

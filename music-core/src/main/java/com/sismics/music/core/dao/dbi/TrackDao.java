@@ -45,24 +45,6 @@ public class TrackDao extends BaseDao<TrackDto, TrackCriteria> {
         }
 
         // Adds search criteria
-        utilQueryParam(criteria, criteriaList, parameterMap);
-
-        SortCriteria sortCriteria;
-        if (criteria.getPlaylistId() != null) {
-            sortCriteria = new SortCriteria(" order by pt.number asc");
-        } else if (criteria.getLike() != null || criteria.getArtistId() != null) {
-            sortCriteria = new SortCriteria(" order by alb.name, t.number, t.title asc");
-        } else if (criteria.getRandom() != null && criteria.getRandom()) {
-            sortCriteria = new SortCriteria(" order by rand()");
-        } else {
-            sortCriteria = new SortCriteria(" order by t.number, t.title asc");
-        }
-
-        return new QueryParam(sb.toString(), criteriaList, parameterMap, sortCriteria, filterCriteria, new TrackDtoMapper());
-    }
-
-    private void utilQueryParam(TrackCriteria criteria, List<String> criteriaList, Map<String, Object> parameterMap){
-        // Adds search criteria
         criteriaList.add("t.deletedate is null");
         if (criteria.getPlaylistId() != null) {
             criteriaList.add("pt.track_id = t.id");
@@ -96,6 +78,19 @@ public class TrackDao extends BaseDao<TrackDto, TrackCriteria> {
         if (criteria.getUserId() != null) {
             parameterMap.put("userId", criteria.getUserId());
         }
+
+        SortCriteria sortCriteria;
+        if (criteria.getPlaylistId() != null) {
+            sortCriteria = new SortCriteria(" order by pt.number asc");
+        } else if (criteria.getLike() != null || criteria.getArtistId() != null) {
+            sortCriteria = new SortCriteria(" order by alb.name, t.number, t.title asc");
+        } else if (criteria.getRandom() != null && criteria.getRandom()) {
+            sortCriteria = new SortCriteria(" order by rand()");
+        } else {
+            sortCriteria = new SortCriteria(" order by t.number, t.title asc");
+        }
+
+        return new QueryParam(sb.toString(), criteriaList, parameterMap, sortCriteria, filterCriteria, new TrackDtoMapper());
     }
 
     /**

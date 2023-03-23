@@ -35,7 +35,22 @@ public class SQLSplitter implements Iterable<CharSequence> {
                 for (; s.charAt(quoteEnd) != '$'; ++quoteEnd)
                     if (quoteEnd >= s.length())
                         return quoteEnd;
-                return utilConsumeQuoteDollar(start, s, quoteEnd);
+                int i = quoteEnd + 1;
+                while (i < s.length()) {
+                    if (s.charAt(i) == '$') {
+                        boolean match = true;
+                        for (int j = start; j <= quoteEnd && i < s.length(); ++j, ++i) {
+                            if (s.charAt(i) != s.charAt(j)) {
+                                match = false;
+                                break;
+                            }
+                        }
+                        if (match)
+                            return i;
+                    } else
+                        ++i;
+                }
+                return i;
             }
 
             default:
@@ -56,25 +71,6 @@ public class SQLSplitter implements Iterable<CharSequence> {
                 return i + 1;
         }
         return s.length();
-    }
-
-    private static int utilConsumeQuoteDollar(int start, final CharSequence s, int quoteEnd) {
-        int i = quoteEnd + 1;
-        while (i < s.length()) {
-            if (s.charAt(i) == '$') {
-                boolean match = true;
-                for (int j = start; j <= quoteEnd && i < s.length(); ++j, ++i) {
-                    if (s.charAt(i) != s.charAt(j)) {
-                        match = false;
-                        break;
-                    }
-                }
-                if (match)
-                    return i;
-            } else
-                ++i;
-        }
-        return i;
     }
 
     private static boolean isNewLine(char c) {
@@ -118,7 +114,18 @@ public class SQLSplitter implements Iterable<CharSequence> {
                 return consumeTillNextLine(s, start);
 
             case '/':
-                return utilConsumeCommentSlash(start, s);
+                if (isNext(s, start, '*')) {
+                    start += 2;
+                    while (start < s.length()) {
+                        if (s.charAt(start) == '*') {
+                            ++start;
+                            if (start < s.length() && s.charAt(start) == '/')
+                                return start + 1;
+                        } else
+                            ++start;
+                    }
+                }
+                return start;
 
             case '{':
                 while (start < s.length() && s.charAt(start) != '}')
@@ -128,21 +135,6 @@ public class SQLSplitter implements Iterable<CharSequence> {
             default:
                 return start;
         }
-    }
-
-    private static int utilConsumeCommentSlash(int start, final CharSequence s) {
-        if (isNext(s, start, '*')) {
-            start += 2;
-            while (start < s.length()) {
-                if (s.charAt(start) == '*') {
-                    ++start;
-                    if (start < s.length() && s.charAt(start) == '/')
-                        return start + 1;
-                } else
-                    ++start;
-            }
-        }
-        return start;
     }
 
     private static int consumeParentheses(final CharSequence s, int start) {

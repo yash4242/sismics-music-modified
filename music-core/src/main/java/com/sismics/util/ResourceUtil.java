@@ -41,13 +41,12 @@ public class ResourceUtil {
             dirUrl = clazz.getClassLoader().getResource(className);
         }
 
-        String slash = "/";
         if (dirUrl.getProtocol().equals("jar")) {
             if (path.startsWith("/")) {
                 path = path.substring(1);
             }
             if (!path.endsWith("/")) {
-                path = path + slash;
+                path = path + "/";
             }
             
             // Extract the JAR path
@@ -56,7 +55,26 @@ public class ResourceUtil {
             Set<String> fileSet = new HashSet<>();
             
             try {
-                utilList(jar, path, filter, fileSet);
+                Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    // Filter according to the path
+                    String entryName = entries.nextElement().getName();
+                    if (!entryName.startsWith(path)) {
+                        continue;
+                    }
+                    String name = entryName.substring(path.length());
+                    if (!"".equals(name)) {
+                        // If it is a subdirectory, just return the directory name
+                        int checkSubdir = name.indexOf("/");
+                        if (checkSubdir >= 0) {
+                            name = name.substring(0, checkSubdir);
+                        }
+                        
+                        if (filter == null || filter.accept(null, name)) {
+                            fileSet.add(name);
+                        }
+                    }
+                }
             } finally {
                 jar.close();
             }
@@ -65,29 +83,6 @@ public class ResourceUtil {
         }
         
         throw new UnsupportedOperationException(MessageFormat.format("Cannot list files for URL {0}", dirUrl));
-    }
-
-    private static void utilList (JarFile jar, String path, FilenameFilter filter, Set<String> fileSet) {
-        Enumeration<JarEntry> entries = jar.entries();
-        while (entries.hasMoreElements()) {
-            // Filter according to the path
-            String entryName = entries.nextElement().getName();
-            if (!entryName.startsWith(path)) {
-                continue;
-            }
-            String name = entryName.substring(path.length());
-            if (!"".equals(name)) {
-                // If it is a subdirectory, just return the directory name
-                int checkSubdir = name.indexOf("/");
-                if (checkSubdir >= 0) {
-                    name = name.substring(0, checkSubdir);
-                }
-                
-                if (filter == null || filter.accept(null, name)) {
-                    fileSet.add(name);
-                }
-            }
-        }
     }
 
     /**

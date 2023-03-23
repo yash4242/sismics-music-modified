@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author jtremeaux
  */
-public final class Constants {
+public class Constants {
     /**
      * Default locale.
      */
@@ -35,9 +35,4 @@ public final class Constants {
      */
     public static final Set<String> SUPPORTED_AUDIO_EXTENSIONS = ImmutableSet.of(
             "ogg", "mp3", "flac", "mp4", "m4a", "m4p", "wma", "wav", "ra", "rm", "m4b");
-
-    private Constants() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-    }
-
 }

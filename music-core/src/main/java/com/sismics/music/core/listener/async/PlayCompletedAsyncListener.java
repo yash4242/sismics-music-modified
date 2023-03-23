@@ -29,7 +29,7 @@ public class PlayCompletedAsyncListener {
      * @param playCompletedEvent Play completed event
      */
     @Subscribe
-    public void onPlayCompleted(final PlayCompletedEvent playCompletedEvent) {
+    public void onPlayCompleted(final PlayCompletedEvent playCompletedEvent) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("Play completed event: " + playCompletedEvent.toString());
         }

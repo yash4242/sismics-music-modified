@@ -7,9 +7,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
-
-import com.sismics.music.core.exception.InputFileReadException;
-
 import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
@@ -36,7 +33,7 @@ public class ImageUtil {
         PNG,
 
         BMP
-    }
+    };
     
     // Related to alpha channel removal
     private static final int[] RGB_MASKS = {0xFF0000, 0xFF00, 0xFF};
@@ -48,7 +45,7 @@ public class ImageUtil {
      * @param file Image file
      * @return File twpe
      */
-    public static FileType getFileFormat(File file) throws InputFileReadException, IOException {
+    public static FileType getFileFormat(File file) throws Exception {
         // Load the file header
         InputStream is = null;
         try {
@@ -56,7 +53,7 @@ public class ImageUtil {
             byte[] headerBytes = new byte[64];
             int readCount = is.read(headerBytes, 0, headerBytes.length);
             if (readCount <= 0) {
-                throw new InputFileReadException("Cannot read input file");
+                throw new Exception("Cannot read input file");
             }
             String header = new String(headerBytes, "US-ASCII");
             
@@ -88,7 +85,7 @@ public class ImageUtil {
      * @param resizedImageMaxSize Target size
      * @return Resized image
      */
-    public static BufferedImage resizeImage(BufferedImage originalImage, int resizedImageMaxSize) {
+    public static BufferedImage resizeImage(BufferedImage originalImage, int resizedImageMaxSize) throws Exception {
         return resizeImage(originalImage, resizedImageMaxSize, null, null, null, null, 0);
     }
 
@@ -104,7 +101,7 @@ public class ImageUtil {
      * @return Resized image
      */
     public static BufferedImage resizeImage(BufferedImage originalImage, Integer resizedImageMaxSize,
-            Integer x, Integer y, Integer w, Integer h) {
+            Integer x, Integer y, Integer w, Integer h) throws Exception {
         return resizeImage(originalImage, resizedImageMaxSize, x, y, w, h, 0);
     }
 
@@ -121,7 +118,7 @@ public class ImageUtil {
      * @return Resized image
      */
     public static BufferedImage resizeImage(BufferedImage originalImage, Integer resizedImageMaxSize,
-            Integer x, Integer y, Integer w, Integer h, int orientation) {
+            Integer x, Integer y, Integer w, Integer h, int orientation) throws Exception {
         // Crop
         BufferedImage croppedImage = originalImage;
         if (x != null && y != null && w != null && h != null) {
@@ -161,7 +158,7 @@ public class ImageUtil {
         ImageWriter writer = null;
         FileImageOutputStream output = null;
         try {
-            writer = iter.next();
+            writer = (ImageWriter) iter.next();
             ImageWriteParam iwp = writer.getDefaultWriteParam();
             iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
             iwp.setCompressionQuality(1.f);
@@ -188,7 +185,7 @@ public class ImageUtil {
      * @param file Image file
      * @return Image without alpha channel
      */
-    public static BufferedImage readImageWithoutAlphaChannel(File file) throws InterruptedException{
+    public static BufferedImage readImageWithoutAlphaChannel(File file) throws Exception {
         Image img = Toolkit.getDefaultToolkit().createImage(file.getAbsolutePath());
         PixelGrabber pg = new PixelGrabber(img, 0, 0, -1, -1, true);
         pg.grabPixels();
@@ -204,40 +201,7 @@ public class ImageUtil {
      * @param size Final size
      * @return Mosaic
      */
-    public static BufferedImage makeMosaic(List<BufferedImage> imageList, int size) {
-        BufferedImage utilImage = utilMakeMosaic(imageList);
-        if (utilImage != null)
-            return utilImage;
-        BufferedImage mosaicImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
-        Graphics2D mosaicGraphic = mosaicImage.createGraphics();
-        
-        int i = 0;
-        for (BufferedImage image : imageList) {
-            utilBufferedImageSize3(i, imageList, mosaicImage, size, mosaicGraphic);
-            utilBufferedImageSize4(i, imageList, mosaicImage, size, mosaicGraphic);
-            i++;
-        }
-        
-        return mosaicImage;
-    }
-
-    private static void utilBufferedImageSize3(int i, List<BufferedImage> imageList, BufferedImage image, int size, Graphics2D mosaicGraphic) {
-        if (i == 0 && imageList.size() == 3 || ((i == 0 || i == 1) && imageList.size() == 2)) {
-            image = Scalr.crop(image, (image.getWidth() - size / 2) / 2, 0, size / 2, image.getHeight());
-            mosaicGraphic.drawImage(image, null, size / 2 * i, 0);
-        }
-    }
-
-    private static void utilBufferedImageSize4(int i, List<BufferedImage> imageList, BufferedImage image, int size, Graphics2D mosaicGraphic) {
-        if (imageList.size() == 4 || imageList.size() == 3 && (i == 1 || i == 2)) {
-            image = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, size / 2, Scalr.OP_ANTIALIAS);
-            mosaicGraphic.drawImage(image, null,
-                    imageList.size() == 3 && i > 0 || imageList.size() == 4 && i > 1 ? size / 2 : 0,
-                    imageList.size() == 3 && i == 1 || imageList.size() == 4 && i % 2 == 0 ? 0 : size / 2);
-        }
-    }
-
-    private static BufferedImage utilMakeMosaic(List<BufferedImage> imageList){
+    public static BufferedImage makeMosaic(List<BufferedImage> imageList, int size) throws Exception {
         if (imageList.size() == 0) {
             // Return a 1x1 pixel transparent image
             BufferedImage mosaicImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -251,6 +215,28 @@ public class ImageUtil {
             return imageList.get(0);
         }
         
-        return null;
+        if (imageList.size() > 4) {
+            imageList = imageList.subList(0, 4);
+        }
+        
+        BufferedImage mosaicImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+        Graphics2D mosaicGraphic = mosaicImage.createGraphics();
+        
+        int i = 0;
+        for (BufferedImage image : imageList) {
+            if (i == 0 && imageList.size() == 3 || ((i == 0 || i == 1) && imageList.size() == 2)) {
+                image = Scalr.crop(image, (image.getWidth() - size / 2) / 2, 0, size / 2, image.getHeight());
+                mosaicGraphic.drawImage(image, null, size / 2 * i, 0);
+            }
+            if (imageList.size() == 4 || imageList.size() == 3 && (i == 1 || i == 2)) {
+                image = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, size / 2, Scalr.OP_ANTIALIAS);
+                mosaicGraphic.drawImage(image, null,
+                        imageList.size() == 3 && i > 0 || imageList.size() == 4 && i > 1 ? size / 2 : 0,
+                        imageList.size() == 3 && i == 1 || imageList.size() == 4 && i % 2 == 0 ? 0 : size / 2);
+            }
+            i++;
+        }
+        
+        return mosaicImage;
     }
 }

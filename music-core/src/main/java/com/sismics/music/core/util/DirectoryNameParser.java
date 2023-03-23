@@ -37,7 +37,7 @@ public class DirectoryNameParser {
      * 
      * @param file File path
      */
-    public DirectoryNameParser(Path file) {
+    public DirectoryNameParser(Path file) throws Exception {
         fileName = file.getFileName().toString();
         String[] data = fileName.split(" - ", 2);
         if (data.length == 2) {

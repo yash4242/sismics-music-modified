@@ -32,6 +32,6 @@ public class UserAlbumMapper extends BaseResultSetMapper<UserAlbum> {
                 r.getString(columns[column++]),
                 r.getInt(columns[column++]),
                 r.getTimestamp(columns[column++]),
-                r.getTimestamp(columns[column]));
+                r.getTimestamp(columns[column++]));
     }
 }

@@ -13,7 +13,7 @@ import com.sismics.music.core.model.context.AppContext;
  */
 public class TestImportAudioService {
     @Test
-    @Ignore("Test Ignored because youtube-dl and ffmpeg are not installed on Travis.")
+    @Ignore // youtube-dl and ffmpeg are not installed on Travis
     public void testDependencies() throws Exception {
         Assert.assertEquals("2014.08.05", AppContext.getInstance().getImportAudioService().getYoutubeDlVersion());
         Assert.assertEquals("N-60899-ga8ad7e4", AppContext.getInstance().getImportAudioService().getFfmpegVersion());

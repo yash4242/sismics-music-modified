@@ -13,10 +13,6 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.*;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-
 /**
  * A helper to update the database incrementally.
  *
@@ -84,7 +80,7 @@ public abstract class DbOpenHelper {
      * 
      * @param version Version number
      */
-    protected void executeAllScript(final int version) throws Exception,IOException, URISyntaxException {
+    protected void executeAllScript(final int version) throws Exception {
         List<String> fileNameList = ResourceUtil.list(getClass(), "/db/update/", (dir, name) -> {
             String versionString = String.format("%03d", version);
             return name.matches("dbupdate-" + versionString + "-\\d+\\.sql");
@@ -113,6 +109,7 @@ public abstract class DbOpenHelper {
                 continue;
             }
             
+//            String formatted = formatter.format(sql);
             try {
                 log.trace(sql);
                 handle.update(sql);
@@ -133,6 +130,15 @@ public abstract class DbOpenHelper {
     
     public abstract void onUpgrade(int oldVersion, int newVersion) throws Exception;
 
+    /**
+     * Returns a List of all Exceptions which occured during the export.
+     *
+     * @return A List containig the Exceptions occured during the export
+     */
+    public List<?> getExceptions() {
+        return exceptions;
+    }
+
     public void setHaltOnError(boolean haltOnError) {
         this.haltOnError = haltOnError;
     }
@@ -143,5 +149,6 @@ public abstract class DbOpenHelper {
      * @param format True to format
      */
     public void setFormat(boolean format) {
+//        this.formatter = (format ? FormatStyle.DDL : FormatStyle.NONE).getFormatter();
     }
 }

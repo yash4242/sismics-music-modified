@@ -30,7 +30,7 @@ public class TrackUnlikedAsyncListener {
      * @param trackUnlikedAsyncEvent New directory created event
      */
     @Subscribe
-    public void onTrackLiked(final TrackUnlikedAsyncEvent trackUnlikedAsyncEvent) {
+    public void onTrackLiked(final TrackUnlikedAsyncEvent trackUnlikedAsyncEvent) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("Track unliked event: " + trackUnlikedAsyncEvent.toString());
         }

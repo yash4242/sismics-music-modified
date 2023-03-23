@@ -6,6 +6,8 @@ import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.rest.exception.ForbiddenClientException;
 import de.umass.lastfm.Album;
 import de.umass.lastfm.ImageSize;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -23,6 +25,11 @@ import java.util.Collection;
  */
 @Path("/albumart")
 public class AlbumArtResource extends BaseResource {
+    /**
+     * Logger.
+     */
+    private static final Logger log = LoggerFactory.getLogger(AlbumArtResource.class);
+
     /**
      * Search album covers.
      *

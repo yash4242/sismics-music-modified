@@ -49,17 +49,14 @@ public class CollectionService extends AbstractScheduledService {
     private static final Logger log = LoggerFactory.getLogger(CollectionService.class);
 
     public CollectionService() {
-        // function not implemented by authors
     }
 
     @Override
     protected void startUp() {
-        // function not implemented by authors
     }
 
     @Override
     protected void shutDown() {
-        // function not implemented by authors
     }
 
     @Override
@@ -167,6 +164,10 @@ public class CollectionService extends AbstractScheduledService {
 
                 // Update the album date
                 // TODO This makes no sense
+                /*Album album = new Album(track.getAlbumId());
+                album.setUpdateDate(track.getCreateDate());
+                AlbumDao albumDao = new AlbumDao();
+                albumDao.updateAlbumDate(album);*/
             }
         } catch (Exception e) {
             log.error("Error extracting metadata from file: " + file, e);
@@ -201,34 +202,6 @@ public class CollectionService extends AbstractScheduledService {
             artistDao.create(albumArtist);
         }
         
-        utilReadTrackTag(tag, track, albumArtist, file, audioFile,artistDao);
-
-        // Track album
-        AlbumDao albumDao = new AlbumDao();
-        Album album = albumDao.getActiveByArtistIdAndName(albumArtist.getId(), albumName);
-        if (album == null) {
-            // Import album art
-            AlbumArtImporter albumArtImporter = new AlbumArtImporter();
-            File albumArtFile = albumArtImporter.scanDirectory(file.getParent());
-
-            album = new Album();
-            album.setArtistId(albumArtist.getId());
-            album.setDirectoryId(rootDirectory.getId());
-            album.setName(albumName);
-            album.setLocation(file.getParent().toString());
-            if (albumArtFile != null) {
-                // TODO Remove this, albumarts are scanned separately
-                AppContext.getInstance().getAlbumArtService().importAlbumArt(album, albumArtFile, false);
-            }
-            Date updateDate = getDirectoryUpdateDate(parentPath);
-            album.setCreateDate(updateDate);
-            album.setUpdateDate(updateDate);
-            albumDao.create(album);
-        }
-        track.setAlbumId(album.getId());
-    }
-
-    private void utilReadTrackTag(Tag tag, Track track, Artist albumArtist, Path file, AudioFile audioFile, ArtistDao artistDao){
         if (tag == null) {
             // No tag available, use filename as title and album artist as artist, and guess the rest
             track.setTitle(Files.getNameWithoutExtension(file.getFileName().toString()));
@@ -276,6 +249,30 @@ public class CollectionService extends AbstractScheduledService {
             }
             track.setArtistId(artist.getId());
         }
+
+        // Track album
+        AlbumDao albumDao = new AlbumDao();
+        Album album = albumDao.getActiveByArtistIdAndName(albumArtist.getId(), albumName);
+        if (album == null) {
+            // Import album art
+            AlbumArtImporter albumArtImporter = new AlbumArtImporter();
+            File albumArtFile = albumArtImporter.scanDirectory(file.getParent());
+
+            album = new Album();
+            album.setArtistId(albumArtist.getId());
+            album.setDirectoryId(rootDirectory.getId());
+            album.setName(albumName);
+            album.setLocation(file.getParent().toString());
+            if (albumArtFile != null) {
+                // TODO Remove this, albumarts are scanned separately
+                AppContext.getInstance().getAlbumArtService().importAlbumArt(album, albumArtFile, false);
+            }
+            Date updateDate = getDirectoryUpdateDate(parentPath);
+            album.setCreateDate(updateDate);
+            album.setUpdateDate(updateDate);
+            albumDao.create(album);
+        }
+        track.setAlbumId(album.getId());
     }
 
     private Date getDirectoryUpdateDate(Path path) {
@@ -303,6 +300,16 @@ public class CollectionService extends AbstractScheduledService {
      * TODO implement a more elaborated scoring function
      */
     public void updateScore() {
-        // To be implemented
+//        AlbumDao albumDao = new AlbumDao();
+//        List<AlbumDto> albumList = albumDao.findByCriteria(new AlbumCriteria());
+//        for (AlbumDto albumDto : albumList) {
+//            Integer score = albumDao.getFavoriteCountByAlbum(albumDto.getId());
+//
+//            Album album = new Album();
+//            album.setId(albumDto.getId());
+//            album.setScore(score);
+//
+//            albumDao.updateScore(album);
+//        }
     }
 }

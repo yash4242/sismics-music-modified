@@ -26,7 +26,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ResourceBundle;
 
 /**
@@ -81,7 +80,7 @@ public class AppResource extends BaseResource {
         // Get the memory appender
         Logger logger = Logger.getRootLogger();
         Appender appender = logger.getAppender("MEMORY");
-        if (!(appender instanceof MemoryAppender)) {
+        if (appender == null || !(appender instanceof MemoryAppender)) {
             throw new ServerException("ServerError", "MEMORY appender not configured");
         }
         MemoryAppender memoryAppender = (MemoryAppender) appender;
@@ -122,7 +121,7 @@ public class AppResource extends BaseResource {
         }
         checkPrivilege(Privilege.ADMIN);
         
-        if (!NetworkUtil.mapTcpPort(httpServletRequest.getServerPort())) {
+        if (!NetworkUtil.mapTcpPort(request.getServerPort())) {
             throw new ServerException("NetworkError", "Error mapping port using UPnP");
         }
 
@@ -158,7 +157,7 @@ public class AppResource extends BaseResource {
      */
     @GET
     @Path("db")
-    public Response db() throws URISyntaxException {
+    public Response db() throws Exception {
         if (!DbUtil.isStarted()) {
             DbUtil.start();
         }

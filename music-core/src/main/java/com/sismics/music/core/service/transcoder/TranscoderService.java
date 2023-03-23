@@ -7,7 +7,6 @@ import com.sismics.music.core.model.dbi.Transcoder;
 import com.sismics.util.io.TranscodedInputStream;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -27,7 +26,7 @@ public class TranscoderService {
      * @param fileSize Expected transcoded file size
      * @return Transcoded input stream
      */
-    public InputStream getTranscodedInputStream(Track track, int seek, int fileSize, Transcoder transcoder) throws IOException{
+    public InputStream getTranscodedInputStream(Track track, int seek, int fileSize, Transcoder transcoder) throws Exception {
         ProcessBuilder pb = getProcessBuilder(track, seek, transcoder);
         return new TranscodedInputStream(pb, fileSize);
     }

@@ -148,4 +148,22 @@ public class ArtistDao extends BaseDao<ArtistDto, ArtistCriteria> {
                 .bind("deleteDate", new Timestamp(new Date().getTime()))
                 .execute();
     }
+    
+    /**
+     * Assemble the query results.
+     *
+     * @param resultList Query results as a table
+     * @return Query results as a list of domain objects
+     */
+    private List<ArtistDto> assembleResultList(List<Object[]> resultList) {
+        List<ArtistDto> artistDtoList = new ArrayList<>();
+        for (Object[] o : resultList) {
+            int i = 0;
+            ArtistDto artistDto = new ArtistDto();
+            artistDto.setId((String) o[i++]);
+            artistDto.setName((String) o[i++]);
+            artistDtoList.add(artistDto);
+        }
+        return artistDtoList;
+    }
 }

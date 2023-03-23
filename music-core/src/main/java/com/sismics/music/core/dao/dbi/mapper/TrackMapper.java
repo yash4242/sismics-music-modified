@@ -51,6 +51,6 @@ public class TrackMapper extends BaseResultSetMapper<Track> {
                 r.getBoolean(columns[column++]),
                 r.getString(columns[column++]),
                 r.getTimestamp(columns[column++]),
-                r.getTimestamp(columns[column]));
+                r.getTimestamp(columns[column++]));
     }
 }

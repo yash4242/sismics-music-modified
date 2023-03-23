@@ -20,7 +20,7 @@ public class TestAlbumArtResource extends BaseMusicTest {
      *
      */
     @Test
-    @Ignore("Ignored by the authors")
+    @Ignore
     public void shouldSearchAlbumArt() throws Exception {
         // Login users
         loginAdmin();
