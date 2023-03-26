@@ -29,7 +29,7 @@ public abstract class BaseResource {
      * Injects the HTTP request.
      */
     @Context
-    protected HttpServletRequest httpServletRequest;
+    protected HttpServletRequest request;
     
     /**
      * Application key.
@@ -48,7 +48,7 @@ public abstract class BaseResource {
      * @return True if the user is authenticated and not anonymous
      */
     protected boolean authenticate() {
-        Principal principal = (Principal) httpServletRequest.getAttribute(TokenBasedSecurityFilter.PRINCIPAL_ATTRIBUTE);
+        Principal principal = (Principal) request.getAttribute(TokenBasedSecurityFilter.PRINCIPAL_ATTRIBUTE);
         if (principal != null && principal instanceof IPrincipal) {
             this.principal = (IPrincipal) principal;
             return !this.principal.isAnonymous();

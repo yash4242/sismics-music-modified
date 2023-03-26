@@ -4,13 +4,10 @@ import com.sismics.music.core.model.dbi.AuthenticationToken;
 import com.sismics.util.context.ThreadLocalContext;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.Handle;
-import com.sismics.music.core.exception.TokenNotFoundException;
 
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
-
-
 
 /**
  * Authentication token DAO.
@@ -71,10 +68,8 @@ public class AuthenticationTokenDao {
                     "  where id = :id")
                     .bind("id", authenticationToken.getId())
                     .execute();
-        } else
-        {
-            
-            throw new TokenNotFoundException("Token not found: " + authenticationTokenId);
+        } else {
+            throw new Exception("Token not found: " + authenticationTokenId);
         }
     }
 

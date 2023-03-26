@@ -75,7 +75,7 @@ public class RequestContextFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest httpServletRequest, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         Handle handle = null;
         try {
             handle = DBIF.get().open();
@@ -88,12 +88,12 @@ public class RequestContextFilter implements Filter {
         handle.begin();
 
         // Disable transaction isolation for GET requests
-        if ("GET".equals(((HttpServletRequest) httpServletRequest).getMethod())) {
+        if ("GET".equals(((HttpServletRequest) request).getMethod())) {
             handle.setTransactionIsolation(TransactionIsolationLevel.READ_UNCOMMITTED);
         }
 
         try {
-            filterChain.doFilter(httpServletRequest, response);
+            filterChain.doFilter(request, response);
         } catch (Exception e) {
             ThreadLocalContext.cleanup();
             
@@ -116,28 +116,24 @@ public class RequestContextFilter implements Filter {
 
         // No error processing the request : commit / rollback the current transaction depending on the HTTP code
         if (handle.isInTransaction()) {
-            utilDoFilter(response, handle);
-        }
-    }
-
-    private void utilDoFilter(ServletResponse response, Handle handle) throws IOException{
-        HttpServletResponse r = (HttpServletResponse) response;
-        int statusClass = r.getStatus() / 100;
-        if (statusClass == 2 || statusClass == 3) {
-            try {
-                handle.commit();
-            } catch (Exception e) {
-                log.error("Error during commit", e);
-                r.sendError(500);
+            HttpServletResponse r = (HttpServletResponse) response;
+            int statusClass = r.getStatus() / 100;
+            if (statusClass == 2 || statusClass == 3) {
+                try {
+                    handle.commit();
+                } catch (Exception e) {
+                    log.error("Error during commit", e);
+                    r.sendError(500);
+                }
+            } else {
+                handle.rollback();
             }
-        } else {
-            handle.rollback();
-        }
 
-        try {
-            handle.close();
-        } catch (Exception e) {
-            log.error("Error closing JDBI handle", e);
+            try {
+                handle.close();
+            } catch (Exception e) {
+                log.error("Error closing JDBI handle", e);
+            }
         }
     }
 }

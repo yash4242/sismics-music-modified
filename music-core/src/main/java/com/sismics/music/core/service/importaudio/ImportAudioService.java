@@ -12,8 +12,8 @@ import com.sismics.music.core.model.dbi.Directory;
 import com.sismics.music.core.service.importaudio.ImportAudio.Status;
 import com.sismics.music.core.util.DirectoryUtil;
 import com.sismics.util.FilenameUtil;
-// import com.sismics.util.mime.MimeType;
-// import com.sismics.util.mime.MimeTypeUtil;
+import com.sismics.util.mime.MimeType;
+import com.sismics.util.mime.MimeTypeUtil;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.lang.StringUtils;
@@ -39,49 +39,6 @@ import java.util.stream.Collectors;
  * @author bgamard
  */
 public class ImportAudioService extends AbstractExecutionThreadService {
-
-    public static final String IMAGE_X_ICON = "image/x-icon";
-    
-    public static final String IMAGE_PNG = "image/png";
-    
-    public static final String IMAGE_JPEG = "image/jpeg";
-    
-    public static final String IMAGE_GIF = "image/gif";
-    
-    public static final String APPLICATION_ZIP = "application/zip";
-
-    public static String guessMimeType(File file) throws Exception {
-        InputStream is = null;
-        try {
-            is = new FileInputStream(file);
-            byte[] headerBytes = new byte[64];
-            int readCount = is.read(headerBytes, 0, headerBytes.length);
-            if (readCount <= 0) {
-                throw new Exception("Cannot read input file");
-            }
-            String header = new String(headerBytes, "US-ASCII");
-            
-            if (header.startsWith("PK")) {
-                return ImportAudioService.APPLICATION_ZIP;
-            } else if (header.startsWith("GIF87a") || header.startsWith("GIF89a")) {
-                return ImportAudioService.IMAGE_GIF;
-            } else if (headerBytes[0] == ((byte) 0xff) && headerBytes[1] == ((byte) 0xd8)) {
-                return ImportAudioService.IMAGE_JPEG;
-            } else if (headerBytes[0] == ((byte) 0x89) && headerBytes[1] == ((byte) 0x50) && headerBytes[2] == ((byte) 0x4e) && headerBytes[3] == ((byte) 0x47) &&
-                    headerBytes[4] == ((byte) 0x0d) && headerBytes[5] == ((byte) 0x0a) && headerBytes[6] == ((byte) 0x1a) && headerBytes[7] == ((byte) 0x0a)) {
-                return ImportAudioService.IMAGE_PNG;
-            } else if (headerBytes[0] == ((byte) 0x00) && headerBytes[1] == ((byte) 0x00) && headerBytes[2] == ((byte) 0x01) && headerBytes[3] == ((byte) 0x00)) {
-                return ImportAudioService.IMAGE_X_ICON;
-            }
-        } finally {
-            if (is != null) {
-                is.close();
-            }
-        }
-        return null;
-    }
-
-
     /**
      * Logger.
      */
@@ -113,12 +70,10 @@ public class ImportAudioService extends AbstractExecutionThreadService {
     private ExecutorService syncExecutor = Executors.newSingleThreadExecutor();
     
     public ImportAudioService() {
-        // function not implemented by authors
     }
 
     @Override
     protected void startUp() {
-        // function not implemented by authors
     }
     
 
@@ -148,7 +103,35 @@ public class ImportAudioService extends AbstractExecutionThreadService {
                 importAudioList.add(importAudio);
                 
                 // Reading standard output to update import status
-                utilRun(process, importAudio);
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    for (String line = reader.readLine(); line != null && isProcessRunning(process); line = reader.readLine()) {
+                        // Update progression
+                        Matcher matcher = PROGRESS_PATTERN.matcher(line);
+                        if (matcher.find()) {
+                            importAudio.setProgress(Float.valueOf(matcher.group(1)));
+                            importAudio.setTotalSize(matcher.group(2));
+                            importAudio.setDownloadSpeed(matcher.group(3));
+                        }
+                        
+                        // Check if the line is an error
+                        if (line.contains("ERROR")) {
+                            importAudio.setStatus(ImportAudio.Status.ERROR);
+                        }
+                        
+                        // New working file
+                        matcher = WORKING_FILE_PATTERN.matcher(line);
+                        if (matcher.find()) {
+                            File file = new File(matcher.group(1));
+                            String name = file.getName();
+                            if (!Strings.isNullOrEmpty(name)) {
+                                importAudio.addWorkingFiles(name);
+                            }
+                        }
+                        
+                        // Debug output
+                        importAudio.setMessage(importAudio.getMessage() + "\n" + line);
+                    }
+                }
                 
                 // The process has not been terminated properly
                 if (process.waitFor() != 0) {
@@ -179,41 +162,6 @@ public class ImportAudioService extends AbstractExecutionThreadService {
             }
         }
     }
-
-    private void utilRun(Process process, ImportAudio importAudio){
-        // Reading standard output to update import status
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            for (String line = reader.readLine(); line != null && isProcessRunning(process); line = reader.readLine()) {
-                // Update progression
-                Matcher matcher = PROGRESS_PATTERN.matcher(line);
-                if (matcher.find()) {
-                    importAudio.setProgress(Float.valueOf(matcher.group(1)));
-                    importAudio.setTotalSize(matcher.group(2));
-                    importAudio.setDownloadSpeed(matcher.group(3));
-                }
-                
-                // Check if the line is an error
-                if (line.contains("ERROR")) {
-                    importAudio.setStatus(ImportAudio.Status.ERROR);
-                }
-                
-                // New working file
-                matcher = WORKING_FILE_PATTERN.matcher(line);
-                if (matcher.find()) {
-                    File file = new File(matcher.group(1));
-                    String name = file.getName();
-                    if (!Strings.isNullOrEmpty(name)) {
-                        importAudio.addWorkingFiles(name);
-                    }
-                }
-                
-                // Debug output
-                importAudio.setMessage(importAudio.getMessage() + "\n" + line);
-            }
-        } catch (Exception e) {
-            log.error("Error: ", e);       
-        }
-    }
     
     /**
      * Returns true if the process is running.
@@ -232,7 +180,6 @@ public class ImportAudioService extends AbstractExecutionThreadService {
     
     @Override
     protected void shutDown() {
-        // function not implemented by authors
     }
 
     /**
@@ -374,11 +321,11 @@ public class ImportAudioService extends AbstractExecutionThreadService {
      * @param file File
      */
     public void importFile(File file) throws Exception {
-        String mimeType = guessMimeType(file);
+        String mimeType = MimeTypeUtil.guessMimeType(file);
         String ext = Files.getFileExtension(file.getName()).toLowerCase();
         String importDir = DirectoryUtil.getImportAudioDirectory().getAbsolutePath();
         
-        if (APPLICATION_ZIP.equals(mimeType)) {
+        if (MimeType.APPLICATION_ZIP.equals(mimeType)) {
             log.info("Importing a ZIP file");
             // It's a ZIP file, unzip accepted files in the import folder
             try (ZipArchiveInputStream archiveInputStream = new ZipArchiveInputStream(new FileInputStream(file), Charsets.UTF_8.name())) {

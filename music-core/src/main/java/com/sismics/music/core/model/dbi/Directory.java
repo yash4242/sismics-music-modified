@@ -140,7 +140,7 @@ public class Directory {
      * Normalize the directory location.
      */
     public void normalizeLocation() {
-        location.replace("\\\\", "/");
+        location.replaceAll("\\\\", "/");
     }
 
     @Override

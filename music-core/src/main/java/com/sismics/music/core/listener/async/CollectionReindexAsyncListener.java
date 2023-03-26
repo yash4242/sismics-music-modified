@@ -8,7 +8,6 @@ import com.sismics.music.core.service.collection.CollectionService;
 import com.sismics.music.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.sismics.music.core.exception.CollectionNotReindexedException;
 
 import java.text.MessageFormat;
 
@@ -29,7 +28,7 @@ public class CollectionReindexAsyncListener {
      * @param collectionReindexAsyncEvent Collection reindex event
      */
     @Subscribe
-    public void onCollectionReindex(final CollectionReindexAsyncEvent collectionReindexAsyncEvent) throws CollectionNotReindexedException {
+    public void onCollectionReindex(final CollectionReindexAsyncEvent collectionReindexAsyncEvent) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("Collection reindex event: " + collectionReindexAsyncEvent.toString());
         }

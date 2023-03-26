@@ -121,7 +121,7 @@ public class AppResource extends BaseResource {
         }
         checkPrivilege(Privilege.ADMIN);
         
-        if (!NetworkUtil.mapTcpPort(httpServletRequest.getServerPort())) {
+        if (!NetworkUtil.mapTcpPort(request.getServerPort())) {
             throw new ServerException("NetworkError", "Error mapping port using UPnP");
         }
 

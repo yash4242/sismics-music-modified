@@ -85,66 +85,59 @@ public class TrackResource extends BaseResource {
         // Start a new thread and release the I/O thread
         new Thread(() -> {
             try {
-                utilStream(transcoderService, transcoder, file, range, asyncResponse, track);
+                if (transcoder == null) {
+                    // Don't chunk the file, send content to the end
+                    final RandomAccessFile raf = new RandomAccessFile(file, "r");
+                    int from = 0, to = (int) (file.length() - 1);
+                    String responseRange = null;
+
+                    if (range != null) {
+                        // Range requested
+                        String[] ranges = range.split("=")[1].split("-");
+                        from = Integer.parseInt(ranges[0]);
+
+                        responseRange = String.format("bytes %d-%d/%d", from, to, file.length());
+                        raf.seek(from);
+                    }
+
+                    final MediaStreamer streamer = new MediaStreamer(to - from + 1, raf);
+                    asyncResponse.resume(Response.ok(streamer).status(range == null ? 200 : 206)
+                            .header("Accept-Ranges", "bytes")
+                            .header("Content-Range", responseRange)
+                            .header(HttpHeaders.CONTENT_LENGTH, streamer.getLength())
+                            .header(HttpHeaders.LAST_MODIFIED, new Date(file.lastModified()))
+                            .build());
+                } else {
+                    int seek = 0;
+                    int from = 0;
+                    int to = 0;
+
+                    if (range != null) {
+                        // Range requested, send a 206 partial content
+                        String[] ranges = range.split("=")[1].split("-");
+                        from = Integer.parseInt(ranges[0]);
+                        seek = from / (128 * 1000 / 8);
+                    }
+
+                    int fileSize = track.getLength() * 128 * 1000 / 8;
+                    InputStream is = transcoderService.getTranscodedInputStream(track, seek, fileSize, transcoder);
+                    Response.ResponseBuilder response = Response.ok(is);
+
+                    if (range != null) {
+                        response = response.status(206);
+                        final String responseRange = String.format("bytes %d-%d/%d", from, to, fileSize);
+                        response.header("Accept-Ranges", "bytes");
+                        response.header("Content-Range", responseRange);
+                    }
+
+                    response.header(HttpHeaders.CONTENT_LENGTH, fileSize);
+                    response.header(HttpHeaders.LAST_MODIFIED, new Date(file.lastModified()));
+                    asyncResponse.resume(response.build());
+                }
             } catch (Exception e) {
                 asyncResponse.resume(e);
             }
         }, "TrackAsyncResponse").start();
-    }
-
-    private void utilStream(
-        final TranscoderService transcoderService, final Transcoder transcoder, 
-        final File file, final String range, 
-        final AsyncResponse asyncResponse, final Track track)  throws Exception {
-        if (transcoder == null) {
-            // Don't chunk the file, send content to the end
-            final RandomAccessFile raf = new RandomAccessFile(file, "r");
-            int from = 0, to = (int) (file.length() - 1);
-            String responseRange = null;
-
-            if (range != null) {
-                // Range requested
-                String[] ranges = range.split("=")[1].split("-");
-                from = Integer.parseInt(ranges[0]);
-
-                responseRange = String.format("bytes %d-%d/%d", from, to, file.length());
-                raf.seek(from);
-            }
-
-            final MediaStreamer streamer = new MediaStreamer(to - from + 1, raf);
-            asyncResponse.resume(Response.ok(streamer).status(range == null ? 200 : 206)
-                    .header("Accept-Ranges", "bytes")
-                    .header("Content-Range", responseRange)
-                    .header(HttpHeaders.CONTENT_LENGTH, streamer.getLength())
-                    .header(HttpHeaders.LAST_MODIFIED, new Date(file.lastModified()))
-                    .build());
-        } else {
-            int seek = 0;
-            int from = 0;
-            int to = 0;
-
-            if (range != null) {
-                // Range requested, send a 206 partial content
-                String[] ranges = range.split("=")[1].split("-");
-                from = Integer.parseInt(ranges[0]);
-                seek = from / (128 * 1000 / 8);
-            }
-
-            int fileSize = track.getLength() * 128 * 1000 / 8;
-            InputStream is = transcoderService.getTranscodedInputStream(track, seek, fileSize, transcoder);
-            Response.ResponseBuilder response = Response.ok(is);
-
-            if (range != null) {
-                response = response.status(206);
-                final String responseRange = String.format("bytes %d-%d/%d", from, to, fileSize);
-                response.header("Accept-Ranges", "bytes");
-                response.header("Content-Range", responseRange);
-            }
-
-            response.header(HttpHeaders.CONTENT_LENGTH, fileSize);
-            response.header(HttpHeaders.LAST_MODIFIED, new Date(file.lastModified()));
-            asyncResponse.resume(response.build());
-        }
     }
 
     @GET
@@ -274,9 +267,14 @@ public class TrackResource extends BaseResource {
         album = Validation.length(album, "album", 1, 1000);
         artist = Validation.length(artist, "artist", 1, 1000);
         albumArtist = Validation.length(albumArtist, "album_artist", 1, 1000);
-        
-        Integer year = utilUpdateYear(yearStr);
-        Integer order = utilUpdateOrder(orderStr);
+        Integer year = null;
+        if (yearStr != null) {
+            year = Validation.integer(yearStr, "year");
+        }
+        Integer order = null;
+        if (orderStr != null) {
+            order = Validation.integer(orderStr, "order");
+        }
 
         TrackDao trackDao = new TrackDao();
         ArtistDao artistDao = new ArtistDao();
@@ -342,21 +340,5 @@ public class TrackResource extends BaseResource {
         
         // Always return OK
         return okJson();
-    }
-
-    private Integer utilUpdateYear(String yearStr) {
-        Integer year = null;
-        if (yearStr != null) {
-            year = Validation.integer(yearStr, "year");
-        }
-        return year;
-    }
-
-    private Integer utilUpdateOrder(String orderStr) {
-        Integer order = null;
-        if (orderStr != null) {
-            order = Validation.integer(orderStr, "order");
-        }
-        return order;
     }
 }

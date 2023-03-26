@@ -202,39 +202,6 @@ public class ImageUtil {
      * @return Mosaic
      */
     public static BufferedImage makeMosaic(List<BufferedImage> imageList, int size) throws Exception {
-        BufferedImage utilImage = utilMakeMosaic(imageList);
-        if (utilImage != null)
-            return utilImage;
-        BufferedImage mosaicImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
-        Graphics2D mosaicGraphic = mosaicImage.createGraphics();
-        
-        int i = 0;
-        for (BufferedImage image : imageList) {
-            utilBufferedImageSize3(i, imageList, mosaicImage, size, mosaicGraphic);
-            utilBufferedImageSize4(i, imageList, mosaicImage, size, mosaicGraphic);
-            i++;
-        }
-        
-        return mosaicImage;
-    }
-
-    private static void utilBufferedImageSize3(int i, List<BufferedImage> imageList, BufferedImage image, int size, Graphics2D mosaicGraphic) throws Exception {
-        if (i == 0 && imageList.size() == 3 || ((i == 0 || i == 1) && imageList.size() == 2)) {
-            image = Scalr.crop(image, (image.getWidth() - size / 2) / 2, 0, size / 2, image.getHeight());
-            mosaicGraphic.drawImage(image, null, size / 2 * i, 0);
-        }
-    }
-
-    private static void utilBufferedImageSize4(int i, List<BufferedImage> imageList, BufferedImage image, int size, Graphics2D mosaicGraphic) throws Exception {
-        if (imageList.size() == 4 || imageList.size() == 3 && (i == 1 || i == 2)) {
-            image = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, size / 2, Scalr.OP_ANTIALIAS);
-            mosaicGraphic.drawImage(image, null,
-                    imageList.size() == 3 && i > 0 || imageList.size() == 4 && i > 1 ? size / 2 : 0,
-                    imageList.size() == 3 && i == 1 || imageList.size() == 4 && i % 2 == 0 ? 0 : size / 2);
-        }
-    }
-
-    private static BufferedImage utilMakeMosaic(List<BufferedImage> imageList){
         if (imageList.size() == 0) {
             // Return a 1x1 pixel transparent image
             BufferedImage mosaicImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -251,6 +218,25 @@ public class ImageUtil {
         if (imageList.size() > 4) {
             imageList = imageList.subList(0, 4);
         }
-        return null;
+        
+        BufferedImage mosaicImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+        Graphics2D mosaicGraphic = mosaicImage.createGraphics();
+        
+        int i = 0;
+        for (BufferedImage image : imageList) {
+            if (i == 0 && imageList.size() == 3 || ((i == 0 || i == 1) && imageList.size() == 2)) {
+                image = Scalr.crop(image, (image.getWidth() - size / 2) / 2, 0, size / 2, image.getHeight());
+                mosaicGraphic.drawImage(image, null, size / 2 * i, 0);
+            }
+            if (imageList.size() == 4 || imageList.size() == 3 && (i == 1 || i == 2)) {
+                image = Scalr.resize(image, Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, size / 2, Scalr.OP_ANTIALIAS);
+                mosaicGraphic.drawImage(image, null,
+                        imageList.size() == 3 && i > 0 || imageList.size() == 4 && i > 1 ? size / 2 : 0,
+                        imageList.size() == 3 && i == 1 || imageList.size() == 4 && i % 2 == 0 ? 0 : size / 2);
+            }
+            i++;
+        }
+        
+        return mosaicImage;
     }
 }

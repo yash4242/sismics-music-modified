@@ -46,15 +46,15 @@ public class Validation {
     public static String length(String s, String name, Integer lengthMin, Integer lengthMax, boolean nullable) throws ClientException {
         s = StringUtils.strip(s);
         if (nullable && StringUtils.isEmpty(s)) {
-            ;
+            return s;
         }
-        else if (s == null) {
+        if (s == null) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must be set", name));
         }
-        else if (lengthMin != null && s.length() < lengthMin) {
+        if (lengthMin != null && s.length() < lengthMin) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must be more than {1} characters", name, lengthMin));
         }
-        else if (lengthMax != null && s.length() > lengthMax) {
+        if (lengthMax != null && s.length() > lengthMax) {
             throw new ClientException("ValidationError", MessageFormat.format("{0} must be more than {1} characters", name, lengthMax));
         }
         return s;

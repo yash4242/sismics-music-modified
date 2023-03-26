@@ -11,7 +11,6 @@ import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.music.core.util.TransactionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.sismics.music.core.exception.PlayCountNotUpdatedException;
 
 /**
  * Play completed listener.
@@ -30,7 +29,7 @@ public class PlayCompletedAsyncListener {
      * @param playCompletedEvent Play completed event
      */
     @Subscribe
-    public void onPlayCompleted(final PlayCompletedEvent playCompletedEvent) throws PlayCountNotUpdatedException {
+    public void onPlayCompleted(final PlayCompletedEvent playCompletedEvent) throws Exception {
         if (log.isInfoEnabled()) {
             log.info("Play completed event: " + playCompletedEvent.toString());
         }

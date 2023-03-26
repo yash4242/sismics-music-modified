@@ -11,7 +11,7 @@ import com.sismics.util.EnvironmentUtil;
  * 
  * @author jtremeaux
  */
-public final class DirectoryUtil {
+public class DirectoryUtil {
     /**
      * Returns the base data directory.
      * 
@@ -93,9 +93,5 @@ public final class DirectoryUtil {
             dataSubDirectory.mkdirs();
         }
         return dataSubDirectory;
-    }
-
-    private DirectoryUtil() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

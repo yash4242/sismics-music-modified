@@ -12,7 +12,6 @@ import com.sismics.util.dbi.filter.FilterCriteria;
 import org.mindrot.jbcrypt.BCrypt;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
-import com.sismics.music.core.exception.ExistingUsernameException;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -74,7 +73,7 @@ public class UserDao extends BaseDao<UserDto, UserCriteria> {
 
         // Checks for user unicity
         if (getActiveByUsername(user.getUsername()) != null) {
-            throw new ExistingUsernameException("AlreadyExistingUsername");
+            throw new Exception("AlreadyExistingUsername");
         }
 
         // Create user
