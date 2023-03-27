@@ -1,7 +1,5 @@
 package com.sismics.music.rest.searchfeature;
 
-import java.util.String;
-
 class SearchContext {
     private SearchStrategy searchStrategy;
 

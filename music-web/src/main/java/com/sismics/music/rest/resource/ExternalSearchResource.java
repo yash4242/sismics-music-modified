@@ -25,11 +25,11 @@ import java.util.Collection;
  * @author jtremeaux
  */
 @Path("/spotify")
-public class SpotifyResource extends BaseResource {
+public class ExternalSearchResource extends BaseResource {
     /**
      * Logger.
      */
-    private static final Logger log = LoggerFactory.getLogger(SpotifyResource.class);
+    private static final Logger log = LoggerFactory.getLogger(ExternalSearchResource.class);
 
     /**
      * Search tracks

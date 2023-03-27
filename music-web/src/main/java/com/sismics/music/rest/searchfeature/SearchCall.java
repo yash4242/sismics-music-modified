@@ -1,6 +1,7 @@
-package com.sismics.music.rest.searchfeature.strategies;
+package com.sismics.music.rest.searchfeature;
 
-import com.sismics.music.rest.searchfeature.SearchStrategy;
+import com.sismics.music.rest.searchfeature.strategies.SpotifySearch;
+import com.sismics.music.rest.searchfeature.strategies.LastfmSearch;
 
 import com.sismics.music.core.dao.dbi.AlbumDao;
 import com.sismics.music.core.dao.dbi.ArtistDao;
@@ -26,11 +27,29 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.String;
 
-public class SpotifySearch implements SearchStrategy {
-    public void search(String trackName) {
-        // Implement spotify search
-        System.out.println("Searching using Spotify");
-    }
+class searchCall {
+    public void searchMain(int strategyID, String trackName) {
+        // strategyID = 0 for Spotify
+        // strategyID = 1 for LastFM
+
+        SearchStrategy searchStrategy;
+
+        if(strategyID == 0) {
+            searchStrategy = new SpotifySearch();
+        }
+        else if(strategyID == 1) {
+            searchStrategy = new LastfmSearch();
+        }
+        else {
+            System.out.println("Incorrect value for StrategyID");
+            return;
+        }
+        
+        SearchContext searchContext = new SearchContext(searchStrategy);
+
+        searchContext.search(trackName);
+
+        System.out.println("Searched list: " + trackName);
+    }   
 }
