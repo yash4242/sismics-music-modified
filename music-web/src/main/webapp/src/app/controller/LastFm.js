@@ -15,7 +15,7 @@ angular.module('music').controller('LastFm', function($scope, $stateParams, $sta
     //$scope.query_result = query_str; //+ " result";
     Restangular.one('external').one('lastfm-search').get({query: query_str})
       .then(function (data) {
-        $scope.results = data.albumArts;
+        $scope.results = data;
         if ($scope.results.length === 0) {
           toaster.pop('warning', 'Search', 'No tracks found');
         }
