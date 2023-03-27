@@ -11,6 +11,13 @@ if [[ -n $jar_path ]]; then
 else
   echo "lastfm-library not found within $lib_dir"
 fi
+jar_path=$(find "$lib_dir" -name "json-20230227.jar" -print -quit)
+if [[ -n $jar_path ]]; then
+  # Run mvn install:install-file with the appropriate arguments
+  mvn install:install-file -Dfile="$jar_path" -DgroupId=org.json -DartifactId=json -Dversion=20230227 -Dpackaging=jar
+else
+  echo "json-library not found within $lib_dir"
+fi
 mvn clean -DskipTests install
 cd music-web
 mvn jetty:run
