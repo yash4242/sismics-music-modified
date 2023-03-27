@@ -135,8 +135,8 @@ angular.module('music',
             url: '/lastfm',
             views: {
               'tab': {
-                templateUrl: 'partial/externalsearch.lastfm.html'
-                //controller: 'LastFm'
+                templateUrl: 'partial/externalsearch.lastfm.html',
+                controller: 'LastFm'
               }
             }
           })

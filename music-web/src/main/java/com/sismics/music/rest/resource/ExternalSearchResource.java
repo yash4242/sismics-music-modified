@@ -19,12 +19,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.Collection;
 
+// import com.sismics.music.rest.searchfeature.S;
+
 /**
  * Album art REST resources.
  * 
  * @author jtremeaux
  */
-@Path("/spotify")
+@Path("/external")
 public class ExternalSearchResource extends BaseResource {
     /**
      * Logger.
@@ -32,14 +34,14 @@ public class ExternalSearchResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(ExternalSearchResource.class);
 
     /**
-     * Search tracks
+     * Search Spotify tracks
      *
      * @param query The query
      * @return Response
      */
     @GET
-    @Path("search")
-    public Response search(
+    @Path("spotify-search")
+    public Response spotifySearch(
             @QueryParam("query") String query) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
@@ -52,21 +54,35 @@ public class ExternalSearchResource extends BaseResource {
         .add("track3")
         .build();
 
+        response.add("albumArts", items);
 
-        // final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
-        // Collection<Album> albums = lastFmService.searchAlbumArt(query);
-        // for (Album album : albums) {
-        //     String url = album.getImageURL(ImageSize.EXTRALARGE);
-        //     if (!Strings.isNullOrEmpty(url)) {
-        //         items.add(Json.createObjectBuilder()
-        //                 .add("url", url)
-        //                 .add("width", 300)
-        //                 .add("height", 300)
-        //                 .build());
-        //     }
-        // }
+        return renderJson(response);
+    }
 
-        //response.add("total", albums.size());
+
+
+    /**
+     * Search LastFm tracks
+     *
+     * @param query The query
+     * @return Response
+     */
+    @GET
+    @Path("lastfm-search")
+    public Response lastfmSearch(
+            @QueryParam("query") String query) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the album arts
+        JsonObjectBuilder response = Json.createObjectBuilder();
+        JsonArray items = Json.createArrayBuilder().add("track1")
+        .add("track2")
+        .add("track3")
+        .add("track4")
+        .build();
+
         response.add("albumArts", items);
 
         return renderJson(response);

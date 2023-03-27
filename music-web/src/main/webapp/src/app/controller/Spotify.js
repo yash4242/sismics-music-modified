@@ -13,7 +13,7 @@ angular.module('music').controller('Spotify', function($scope, $stateParams, $st
   // Search with an external API 
   $scope.spotifySearch = function(query_str) {
     //$scope.query_result = query_str; //+ " result";
-    Restangular.one('spotify').one('search').get({query: query_str})
+    Restangular.one('external').one('spotify-search').get({query: query_str})
       .then(function (data) {
         $scope.results = data.albumArts;
         if ($scope.results.length === 0) {
