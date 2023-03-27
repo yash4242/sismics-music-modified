@@ -126,8 +126,8 @@ angular.module('music',
             url: '/spotify',
             views: {
               'tab': {
-                templateUrl: 'partial/externalsearch.spotify.html'
-                //controller: 'Spotify'
+                templateUrl: 'partial/externalsearch.spotify.html',
+                controller: 'Spotify'
               }
             }
           })

@@ -1,7 +1,7 @@
-// 'use strict';
+'use strict';
 
-// /**
-//  * Add music controller.
-//  */
-// angular.module('music').controller('ExternalSearch', function($scope) {
-// });
+/**
+ * External Search controller.
+ */
+angular.module('music').controller('ExternalSearch', function($scope) {
+});
