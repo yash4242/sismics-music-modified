@@ -2,9 +2,12 @@ package com.sismics.music.rest.searchfeature.strategies;
 
 import com.sismics.music.rest.searchfeature.SearchStrategy;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
@@ -20,6 +23,8 @@ public class SpotifySearch implements SearchStrategy {
         String client_secret = "66815b8214c443b7a445b61432d1180f";
         String access_token = null;
 
+        StringBuffer response = new StringBuffer();
+
         try {
             // Obtain client credentials token
             URL url = new URL("https://accounts.spotify.com/api/token");
@@ -34,7 +39,7 @@ public class SpotifySearch implements SearchStrategy {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String inputLine;
-            StringBuffer response = new StringBuffer();
+            response = new StringBuffer();
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
@@ -48,7 +53,7 @@ public class SpotifySearch implements SearchStrategy {
             System.out.println("Error: " + e.getMessage());
         }
 
-        // System.out.println(access_token);
+        System.out.println(access_token);
         if (access_token != null) {
             try {
                 // Make GET request to Spotify API
@@ -66,7 +71,7 @@ public class SpotifySearch implements SearchStrategy {
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-                StringBuffer response = new StringBuffer();
+                response = new StringBuffer();
                 while ((inputLine = in.readLine()) != null) {
                     response.append(inputLine);
                     System.out.println(inputLine);
@@ -80,7 +85,11 @@ public class SpotifySearch implements SearchStrategy {
             }
         }
 
-        // JSONObject jsonObject = new JSONObject(response.toString());
+        JsonReader jsonReader = Json.createReader(new StringReader(response.toString()));
+        JsonObject jsonObject = jsonReader.readObject();
+
+        // THIS SHOULD IDEALLY BE RETURNED BUT THE CODE IS NEVER REACHING HERE
+        // return jsonObject;
         return null;
     }
 }
