@@ -19,6 +19,7 @@ import com.sismics.rest.util.Validation;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,8 +29,11 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class SpotifySearch implements SearchStrategy {
-    public void search(String trackName) {
+    public JsonObject search(String trackName) {
         // Implement spotify search
+
         System.out.println("Searching using Spotify");
+        
+        return null;
     }
 }

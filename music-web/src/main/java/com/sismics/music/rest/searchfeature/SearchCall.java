@@ -1,6 +1,9 @@
 package com.sismics.music.rest.searchfeature;
 
 import com.sismics.music.rest.searchfeature.strategies.SpotifySearch;
+
+import javax.json.JsonObject;
+
 import com.sismics.music.rest.searchfeature.strategies.LastfmSearch;
 
 // import com.sismics.music.core.dao.dbi.AlbumDao;
@@ -29,7 +32,7 @@ import com.sismics.music.rest.searchfeature.strategies.LastfmSearch;
 // import java.util.List;
 
 class searchCall {
-    public void searchMain(int strategyID, String trackName) {
+    public JsonObject searchMain(int strategyID, String trackName) {
         // strategyID = 0 for Spotify
         // strategyID = 1 for LastFM
 
@@ -43,13 +46,15 @@ class searchCall {
         }
         else {
             System.out.println("Incorrect value for StrategyID");
-            return;
+            return null;
         }
         
         SearchContext searchContext = new SearchContext(searchStrategy);
 
-        searchContext.search(trackName);
+        JsonObject searchResult = searchContext.search(trackName);
 
         System.out.println("Searched list: " + trackName);
+
+        return searchResult;
     }   
 }
