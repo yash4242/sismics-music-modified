@@ -31,7 +31,7 @@ import com.sismics.music.rest.searchfeature.strategies.LastfmSearch;
 // import javax.ws.rs.core.Response;
 // import java.util.List;
 
-class searchCall {
+public class SearchCall {
     public JsonObject searchMain(int strategyID, String trackName) {
         // strategyID = 0 for Spotify
         // strategyID = 1 for LastFM

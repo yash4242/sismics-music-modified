@@ -299,4 +299,17 @@ public class LastFmService extends AbstractScheduledService {
     public Collection<Album> searchAlbumArt(String query) {
         return Album.search(query, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY));
     }
+    /*
+     * Search for tracks.
+     * @param trackName The track name
+     */
+    public Collection<de.umass.lastfm.Track> searchTrack(String trackName, int limit){
+        return de.umass.lastfm.Track.search(null, trackName, limit, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY));
+    }
+    /*
+     * get track recommendations
+     */
+    public Collection<de.umass.lastfm.Track> getRecommendations(String artist, String trackName, int limit){
+        return de.umass.lastfm.Track.getSimilar(artist, trackName, ConfigUtil.getConfigStringValue(ConfigType.LAST_FM_API_KEY), limit);
+    }
 }
