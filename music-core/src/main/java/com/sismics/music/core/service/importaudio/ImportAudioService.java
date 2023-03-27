@@ -346,6 +346,8 @@ public class ImportAudioService extends AbstractExecutionThreadService {
             // It should be a single audio track
             File outputFile = new File(importDir + File.separator + file.getName());
             log.info("Importing a single track: " + outputFile);
+            // log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+            // log.info("Import directory: " + importDir);
             Files.copy(file, outputFile);
         } else {
             throw new Exception("File not supported");
