@@ -19,9 +19,15 @@ import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.Validation;
 
+import com.sismics.music.core.service.lastfm.LastFmService;
+import com.sismics.music.core.model.context.AppContext;
+import java.util.Collection;
+import de.umass.lastfm.*;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
@@ -495,6 +501,7 @@ public class PlaylistResource extends BaseResource {
         notFoundIfNull(playlist, "Playlist: " + playlistId);
 
         // Output the playlist
+        // System.out.println("Playlist Contents: " + buildPlaylistJson(playlist).build());
         return renderJson(buildPlaylistJson(playlist));
     }
 
@@ -573,6 +580,62 @@ public class PlaylistResource extends BaseResource {
         if (playlist.getName() != null) {
             response.add("name", playlist.getName());
         }
+        return response;
+    }
+
+    // This function returns a JsonObject containing the tracks in the playlist
+    private JsonObject playlistTracks(@PathParam("id") String playlistId) {
+        // Get the playlist
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the playlist
+        PlaylistCriteria criteria = new PlaylistCriteria()
+                .setUserId(principal.getId());
+        if (DEFAULt_playlist.equals(playlistId)) {
+            criteria.setDefaultPlaylist(true);
+        } else {
+            criteria.setDefaultPlaylist(false);
+            criteria.setId(playlistId);
+        }
+        PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
+        notFoundIfNull(playlist, "Playlist: " + playlistId);
+
+        // Output the playlist
+        // System.out.println("Playlist Contents: " + buildPlaylistJson(playlist).build());
+        /* 
+         * This Json is of the form
+         * {"tracks":[{"order":0,"id":"a4936196-b0f0-4483-9fba-f77b939ccb20","title":"Industry Baby","year":0,"genre":null,"length":212,"bitrate":44100,"vbr":false,"format":"mp3","play_count":1,"liked":false,"artist":{"id":"18740b3c-9d58-4f67-953c-cf4879a652ec","name":"Lil Nas X"},"album":{"id":"15b77dd2-5211-49c3-9b40-043544652a97","name":"Montero","albumart":false}},{"order":1,"id":"d4ffc849-ec13-48b7-9762-41db9a85f926","title":"Believer","year":0,"genre":null,"length":204,"bitrate":44100,"vbr":false,"format":"mp3","play_count":0,"liked":false,"artist":{"id":"8a184724-cc1c-4258-9bed-e1a4f065de23","name":"Imagine Dragons"},"album":{"id":"27ee3771-2f33-4258-8ff0-ae6c1fda5e5f","name":"Believe","albumart":false}}],"id":"d64a0063-24d3-4952-a719-1f98cbb7cf01","name":"trial"}
+         */
+        return buildPlaylistJson(playlist).build();
+    }
+    @GET
+    @Path("{id: [a-z0-9\\-]+}/recommendation")
+    public JsonObject getRecommendation(@PathParam("id") String playlistId) {
+        //implement strategy pattern ig
+        JsonObject playlist = playlistTracks(playlistId);
+        final LastFmService lastFmService = AppContext.getInstance().getLastFmService();
+        // iterate over all the tracks in the playlist,ie, playlist.tracks using a for loop
+        // for each track, get the artist and album
+        JsonArray tracks = playlist.getJsonArray("tracks");
+        JsonArrayBuilder rectrackArray = Json.createArrayBuilder();
+        for (int i=0;i<tracks.size();i++) {
+            JsonObject track = tracks.getJsonObject(i);
+            String artist = track.getJsonObject("artist").getString("name");
+            String trackname = track.getString("title"); 
+            Collection<de.umass.lastfm.Track> recom=lastFmService.getRecommendations(artist,trackname,1);
+            for (de.umass.lastfm.Track t : recom) {
+                rectrackArray.add(Json.createObjectBuilder()
+                        .add("name", t.getName())
+                        .add("artist", t.getArtist()));
+            }
+        }
+        JsonObject response = Json.createObjectBuilder()
+                .add("status", "ok")
+                .add("tracks", rectrackArray)
+                .build();
+        System.out.println("response: " + response);
         return response;
     }
 }
