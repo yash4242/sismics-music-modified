@@ -82,12 +82,23 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
     }
   };
 
-  $scope.recommend = function() {
+  $scope.spotifyrecommend = function() {
     //$scope.query_result = query_str; //+ " result";
-    Restangular.one('playlist', $stateParams.id).one('recommendation').get()
+    Restangular.one('playlist', $stateParams.id).one('spotifyrecommendation').get()
       .then(function (data) {
-        $scope.recommendations = data;
-        if ($scope.recommendations.length === 0) {
+        $scope.spotifyrecommendations = data;
+        if ($scope.spotifyrecommendations.length === 0) {
+          toaster.pop('warning', 'Search', 'No tracks found');
+        }
+      });
+  };
+
+  $scope.lastfmrecommend = function() {
+    //$scope.query_result = query_str; //+ " result";
+    Restangular.one('playlist', $stateParams.id).one('lastfmrecommendation').get()
+      .then(function (data) {
+        $scope.lastfmrecommendations = data;
+        if ($scope.lastfmrecommendations.length === 0) {
           toaster.pop('warning', 'Search', 'No tracks found');
         }
       });
