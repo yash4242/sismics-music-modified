@@ -81,4 +81,18 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
       });
     }
   };
+
+  $scope.recommend = function() {
+    //$scope.query_result = query_str; //+ " result";
+    Restangular.one('playlist', $stateParams.id).one('recommendation').get()
+      .then(function (data) {
+        $scope.recommendations = data;
+        if ($scope.recommendations.length === 0) {
+          toaster.pop('warning', 'Search', 'No tracks found');
+        }
+      });
+  };
+
+
+
 });

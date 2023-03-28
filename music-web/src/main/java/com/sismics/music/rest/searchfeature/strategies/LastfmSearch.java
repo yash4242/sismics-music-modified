@@ -20,7 +20,8 @@ public class LastfmSearch implements SearchStrategy {
         for (Track track : result) {
             trackArray.add(Json.createObjectBuilder()
                     .add("name", track.getName())
-                    .add("artist", track.getArtist()));
+                    .add("artist", track.getArtist())
+            );
         }
 
         JsonObject response = Json.createObjectBuilder()
