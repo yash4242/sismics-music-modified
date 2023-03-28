@@ -63,6 +63,7 @@ public class SpotifySearch implements SearchStrategy {
                 // "Authorization: Bearer
                 // BQCvSGd40LljEBD8zZrxJOIPLvgw-DWDKhViuYgLn2g-C--nADMl3IM-hziSTLlAp6e_aG-a51Qgorjqh9OTI1tskhqAgXci_5-P28-tf98_08cHy1Sm3D8QqrksHxH-qJJCbYRyDke-xYw13EA515TlLy6QgAL8ho3gxSqu0jFSJgr8PdtnJWvMJZN6NaCK
 
+                trackName = trackName.replace(" ", "+");
                 URL url = new URL("https://api.spotify.com/v1/search?q=" + trackName + "&type=track&limit=10&market=IN");
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("GET");
@@ -89,7 +90,7 @@ public class SpotifySearch implements SearchStrategy {
         JsonObject jsonObject = jsonReader.readObject();
 
         // THIS SHOULD IDEALLY BE RETURNED BUT THE CODE IS NEVER REACHING HERE
-        // return jsonObject;
-        return null;
+        return jsonObject;
+        //return null;
     }
 }

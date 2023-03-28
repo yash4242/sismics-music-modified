@@ -5,27 +5,31 @@
     </div>
 </li> -->
 <div>
-<form class="well-lg row" name="apiForm" novalidate>
-  <div class="form-group col-sm-6">
-    <input name="query" type="text" id="inputQuery" placeholder="Spotify Search" required class="form-control" ng-model="query" />
-  </div>
+  <form class="well-lg row" name="apiForm" novalidate>
+    <div class="form-group col-sm-6">
+      <input name="query" type="text" id="inputQuery" placeholder="Spotify Search" required class="form-control"
+        ng-model="query" />
+    </div>
 
-  <button type="submit" class="btn btn-primary col-sm-2" ng-click="spotifySearch(query)" >
-    <span class="glyphicon glyphicon-search"></span> Search
-  </button>
-</form>
+    <button type="submit" class="btn btn-primary col-sm-2" ng-click="spotifySearch(query)">
+      <span class="glyphicon glyphicon-search"></span> Search
+    </button>
+  </form>
 
-<!-- {{result}} -->
-  
+  <!-- {{result}} -->
+
 </div>
 <div class="row results">
-  <div class="col-md-3 btn-pointer" ng-repeat="item in results.tracks.items.artists" ng-click="selectResult(result.url)">
-    <div class="thumbnail">
-      <div class="img-container">
-        <img ng-src="{{ result.url }}" />
-      </div>
-      <div class="caption text-center">
-        {{ item.name }}
+  <div class="col-md-3 btn-pointer" ng-repeat="item in results.tracks.items"> 
+    <div ng-repeat="artist in item.artists"> 
+      <div class="thumbnail">
+        <div class="caption text-center">
+          <a href={{item.external_urls.spotify}} target="_blank">
+          {{ item.name }}
+          -
+          {{ artist.name }}
+        </a>
+        </div>
       </div>
     </div>
   </div>

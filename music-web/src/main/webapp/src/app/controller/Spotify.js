@@ -15,7 +15,7 @@ angular.module('music').controller('Spotify', function($scope, $stateParams, $st
     //$scope.query_result = query_str; //+ " result";
     Restangular.one('external').one('spotify-search').get({query: query_str})
       .then(function (data) {
-        $scope.results = data.albumArts;
+        $scope.results = data;
         if ($scope.results.length === 0) {
           toaster.pop('warning', 'Search', 'No tracks found');
         }

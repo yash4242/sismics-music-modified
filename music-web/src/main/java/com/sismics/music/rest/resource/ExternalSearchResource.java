@@ -43,22 +43,16 @@ public class ExternalSearchResource extends BaseResource {
      */
     @GET
     @Path("spotify-search")
-    public Response spotifySearch(
+    public JsonObject spotifySearch(
             @QueryParam("query") String query) {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
 
-        // Get the album arts
-        JsonObjectBuilder response = Json.createObjectBuilder();
-        JsonArray items = Json.createArrayBuilder().add("track1")
-        .add("track2")
-        .add("track3")
-        .build();
+        SearchCall call= new SearchCall();
+        JsonObject response = call.searchMain(0,query); 
 
-        response.add("albumArts", items);
-
-        return renderJson(response);
+        return response;
     }
 
 
