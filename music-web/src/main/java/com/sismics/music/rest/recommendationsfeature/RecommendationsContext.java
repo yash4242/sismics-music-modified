@@ -1,6 +1,6 @@
 package com.sismics.music.rest.recommendationsfeature;
 
-import java.util.*;
+import javax.json.JsonObject;
 
 class RecommendationsContext {
     private RecommendationsStrategy recommendationsStrategy;
@@ -9,8 +9,8 @@ class RecommendationsContext {
         this.recommendationsStrategy = recommendationsStrategy;
     }
 
-    public List<String> getRecommendations(String playlistID) {
-        List<String> recommendationsResult = recommendationsStrategy.getRecommendations(playlistID);
+    public JsonObject getRecommendations(String playlistID) {
+        JsonObject recommendationsResult = recommendationsStrategy.getRecommendations(playlistID);
         return recommendationsResult;
     }
 }

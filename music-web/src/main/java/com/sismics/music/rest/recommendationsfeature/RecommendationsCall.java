@@ -3,10 +3,10 @@ package com.sismics.music.rest.recommendationsfeature;
 import com.sismics.music.rest.recommendationsfeature.strategies.SpotifyRecommendations;
 import com.sismics.music.rest.recommendationsfeature.strategies.LastfmRecommendations;
 
-import java.util.*;
+import javax.json.JsonObject;
 
 public class RecommendationsCall {
-    public List<String> getRecommendationsMain(int strategyID, String playlistId) {
+    public JsonObject getRecommendationsMain(int strategyID, String playlistId) {
         // strategyID = 0 for Spotify
         // strategyID = 1 for LastFM
 
@@ -25,7 +25,7 @@ public class RecommendationsCall {
         
         RecommendationsContext recommendationsContext = new RecommendationsContext(recommendationsStrategy);
 
-        List<String> recommendationsResult = recommendationsContext.getRecommendations(playlistId);
+        JsonObject recommendationsResult = recommendationsContext.getRecommendations(playlistId);
 
         System.out.println("Searched list: " + playlistId);
 

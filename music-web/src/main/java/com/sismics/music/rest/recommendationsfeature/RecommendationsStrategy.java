@@ -1,7 +1,7 @@
 package com.sismics.music.rest.recommendationsfeature;
 
-import java.util.*;
+import javax.json.JsonObject;
 
 public interface RecommendationsStrategy {
-    public List<String> getRecommendations(String playlistId);
+    public JsonObject getRecommendations(String playlistId);
 }
