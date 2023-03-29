@@ -36,15 +36,18 @@ public class Playlist {
 
 
     public Playlist() {
+        this.visibility = PlaylistVisibilityEnum.PUBLIC;
     }
 
     public Playlist(String id) {
         this.id = id;
+        this.visibility = PlaylistVisibilityEnum.PUBLIC;
     }
 
     public Playlist(String id, String userId) {
         this.id = id;
         this.userId = userId;
+        this.visibility = PlaylistVisibilityEnum.PUBLIC;
     }
 
     /**
