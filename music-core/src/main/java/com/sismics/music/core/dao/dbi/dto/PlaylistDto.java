@@ -1,5 +1,6 @@
 package com.sismics.music.core.dao.dbi.dto;
 
+import com.sismics.music.core.constant.PlaylistVisibilityEnum;
 /**
  * Playlist DTO.
  *
@@ -30,6 +31,11 @@ public class PlaylistDto {
      * Number of plays in the playlist.
      */
     private Long userTrackPlayCount;
+
+    /**
+     * Visibility of the playlist.
+     */
+    private PlaylistVisibilityEnum visibility;
 
     public String getId() {
         return id;
@@ -69,5 +75,13 @@ public class PlaylistDto {
 
     public void setUserTrackPlayCount(Long userTrackPlayCount) {
         this.userTrackPlayCount = userTrackPlayCount;
+    }
+
+    public PlaylistVisibilityEnum getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(String visibility) {
+        this.visibility = PlaylistVisibilityEnum.valueOf(visibility);
     }
 }
