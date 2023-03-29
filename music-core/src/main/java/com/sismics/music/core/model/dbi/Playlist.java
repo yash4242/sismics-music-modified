@@ -2,6 +2,7 @@ package com.sismics.music.core.model.dbi;
 
 import com.google.common.base.Objects;
 import com.sismics.music.core.dao.dbi.PlaylistDao;
+import com.sismics.music.core.constant.PlaylistVisibilityEnum;
 
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
  * A playlist is either the list of current played tracks (the "default" playlist), or a saved playlist with a name.
  * 
  * @author jtremeaux
+ * @author yash4242
  */
 public class Playlist {
     /**
@@ -26,6 +28,12 @@ public class Playlist {
      * Playlist name.
      */
     private String name;
+
+    /**
+     * Visibilty of the playlist.
+     */
+    private PlaylistVisibilityEnum visibility;
+
 
     public Playlist() {
     }
@@ -82,6 +90,26 @@ public class Playlist {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+    /**
+     * Getter of visibility.
+     *
+     * @return visibility
+     */
+    public PlaylistVisibilityEnum getVisibility() {
+        return visibility;
+    }
+
+    /**
+     * Setter of visibility.
+     *
+     * @param visibility visibility
+     */
+    public void setVisibility(PlaylistVisibilityEnum visibility) {
+        this.visibility = visibility;
+    }
+
+
 
     /**
      * Create a named playlist.
