@@ -41,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.util.Base64;
 import java.net.URL;
 import javax.json.JsonReader;
+import com.sismics.music.core.constant.PlaylistVisibilityEnum;
 
 /**
  * Playlist REST resources.
@@ -592,6 +593,40 @@ public class PlaylistResource extends BaseResource {
         return response;
     }
 
+    // function to change the visibility of a playlist
+    @POST
+    @Path("{id: [a-z0-9\\-]+}/visibility")
+    public Response changeVisibility(
+            @PathParam("id") String playlistId,
+            @FormParam("visibility") String visibility) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+
+        // Get the playlist
+        PlaylistCriteria criteria = new PlaylistCriteria()
+                .setUserId(principal.getId());
+        if (DEFAULt_playlist.equals(playlistId)) {
+            criteria.setDefaultPlaylist(true);
+        } else {
+            criteria.setDefaultPlaylist(false);
+            criteria.setId(playlistId);
+        }
+        PlaylistDto playlistDto = new PlaylistDao().findFirstByCriteria(criteria);
+        notFoundIfNull(playlistDto, "Playlist: " + playlistId);
+        visibility=visibility.toUpperCase();
+        Playlist playlist=new Playlist(playlistDto.getId());
+        if(playlist.getVisibility().equals(visibility)) {
+            return okJson();
+        }
+        playlist.setVisibility(PlaylistVisibilityEnum.valueOf(visibility));
+        new PlaylistDao().update(playlist);
+        
+
+        // Always return OK
+        return okJson();
+    }
+    
     // This function returns a JsonObject containing the tracks in the playlist
     public JsonObject playlistTracks(@PathParam("id") String playlistId) {
         // Get the playlist
