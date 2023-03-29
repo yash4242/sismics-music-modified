@@ -74,6 +74,7 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
     public String create(Playlist playlist) {
         // playlist.setId(UUID.randomUUID().toString());
         final Handle handle = ThreadLocalContext.get().getHandle();
+        System.out.println("Playlist creation in progress for user: " + playlist.getUserId() + " and name: " + playlist.getName());
         handle.createStatement("insert into " +
                 "  t_playlist(id, user_id, name)" +
                 "  values(:id, :userId, :name)")
@@ -102,9 +103,11 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
     public void update(Playlist playlist) {
         final Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("update t_playlist" +
-                "  set name = :name" +
+                "  set name = :name," +
+                "  visibility = :visibility" +
                 "  where id = :id")
                 .bind("name", playlist.getName())
+                .bind("visibility", playlist.getVisibility().toString())
                 .bind("id", playlist.getId())
                 .execute();
     }

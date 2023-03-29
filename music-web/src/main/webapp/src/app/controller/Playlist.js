@@ -104,6 +104,21 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
       });
   };
 
+  $scope.changeVisibility = function(value)  {
+    //$scope.query_result = query_str; //+ " result";
+    //console.log("type:", visibility_type);
+
+    $scope.visibility_type = value;
+    console.log('value changed to', value);
+  
+
+    Restangular.one('playlist', $stateParams.id).post('visibility', {visibility: value})
+      .then(function () {
+        // console.log(data);
+        //$scope.visibility = value;
+        console.log("sucess");
+      });
+  };
 
 
 });

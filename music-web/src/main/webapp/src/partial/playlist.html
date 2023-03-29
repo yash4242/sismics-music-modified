@@ -13,6 +13,27 @@
       <button class="btn btn-link" ng-click="lastfmrecommend()"><span class="glyphicon glyphicon-plus"></span> LastFm Recommendations</button>
     </div>
 
+    <div >
+      <input type="radio" ng-model="value" value="public" ng-change='changeVisibility(value)'> public
+      <input type="radio" ng-model="value" value="private" ng-change='changeVisibility(value)'> private
+    </div>
+
+    {{visibility_type}}
+
+<!-- 
+    <script>
+      let radio = document.querySelectorAll('.radiogroup input');
+      let label = document.querySelectorAll('.radiogroup label');
+
+      radio.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+          console.log('Value:' + this.value);
+          //changeVisibility(this.value);
+        });
+      });
+    </script> -->
+
+
     <table class="table table-striped table-playing-tracks">
       <thead>
       <tr>
