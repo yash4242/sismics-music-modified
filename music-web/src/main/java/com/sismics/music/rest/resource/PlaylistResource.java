@@ -144,7 +144,8 @@ public class PlaylistResource extends BaseResource {
 
         // Get the playlist
         PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
+                .setUserId(principal.getId())
+                ;
         if (DEFAULt_playlist.equals(playlistId)) {
             criteria.setDefaultPlaylist(true);
         } else {
@@ -152,7 +153,16 @@ public class PlaylistResource extends BaseResource {
             criteria.setId(playlistId);
         }
         PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
+        // System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        // System.out.println("Trying to add to playlist: " + playlist.getName() );
         notFoundIfNull(playlist, "Playlist: " + playlistId);
+        // System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        // System.out.println("Trying to add to playlist: " + playlist.getName() );
+        // // Check if the playlist is owned by the user currently logged in
+        // if (!(playlist.getVisibility()==PlaylistVisibilityEnum.COLLAB) || !principal.getId().equals(playlist.getUserId())) {
+        //     System.out.println("Playlist is not owned by the user currently logged in");
+        //     throw new ForbiddenClientException();
+        // }
 
         PlaylistTrackDao playlistTrackDao = new PlaylistTrackDao();
         if (clear != null && clear) {
@@ -194,7 +204,8 @@ public class PlaylistResource extends BaseResource {
 
         // Get the playlist
         PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
+                // .setUserId(principal.getId())
+                ;
         if (DEFAULt_playlist.equals(playlistId)) {
             criteria.setDefaultPlaylist(true);
         } else {
@@ -203,6 +214,14 @@ public class PlaylistResource extends BaseResource {
         }
         PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
         notFoundIfNull(playlist, "Playlist: " + playlistId);
+        // System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        // System.out.println("Trying to add to playlist: " + playlist.getName() );
+        // System.out.println("Visibility: " + playlist.getVisibility().toString());
+        // Check if the playlist is owned by the user currently logged in
+        if (!(playlist.getVisibility()==PlaylistVisibilityEnum.COLLAB) &&  !principal.getId().equals(playlist.getUserId())) {
+            System.out.println("Playlist is not owned by the user currently logged in");
+            throw new ForbiddenClientException();
+        }
 
         PlaylistTrackDao playlistTrackDao = new PlaylistTrackDao();
         if (clear != null && clear) {
@@ -470,19 +489,19 @@ public class PlaylistResource extends BaseResource {
                 , sortCriteria, null);
         
         // Print the contents of paginatedList
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        System.out.println(paginatedList.getResultList().size());
+        // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        // System.out.println(paginatedList.getResultList().size());
 
         // Output the list
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (PlaylistDto playlist : paginatedList.getResultList()) {
-            System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-            System.out.println(playlist.getVisibility());
-            System.out.println("Playlist created by: "+playlist.getUserId());
-            System.out.println("Current user: "+principal.getId());
+            // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            // System.out.println(playlist.getVisibility());
+            // System.out.println("Playlist created by: "+playlist.getUserId());
+            // System.out.println("Current user: "+principal.getId());
             // check if the playlist is public or if the playlist.user_id is the same as the current user
-            if ((playlist.getVisibility() == PlaylistVisibilityEnum.PUBLIC) || playlist.getUserId().equals(principal.getId())) {
+            if (!(playlist.getVisibility() == PlaylistVisibilityEnum.PRIVATE) || playlist.getUserId().equals(principal.getId())) {
                 items.add(Json.createObjectBuilder()
                         .add("id", playlist.getId())
                         .add("name", playlist.getName())

@@ -7,4 +7,5 @@ package com.sismics.music.core.constant;
 public enum PlaylistVisibilityEnum {
     PUBLIC,
     PRIVATE,
+    COLLAB,
 }
