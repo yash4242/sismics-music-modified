@@ -1,5 +1,8 @@
 package com.sismics.music.core.dao.dbi.criteria;
 
+
+import com.sismics.music.core.constant.PlaylistVisibilityEnum;
+
 /**
  * Playlist criteria.
  *
@@ -25,6 +28,12 @@ public class PlaylistCriteria {
      * User ID.
      */
     private String userId;
+
+
+    /**
+     * playlist visibility.
+     */
+    private PlaylistVisibilityEnum visibility;
 
     public String getId() {
         return this.id;
@@ -59,6 +68,15 @@ public class PlaylistCriteria {
 
     public PlaylistCriteria setUserId(String userId) {
         this.userId = userId;
+        return this;
+    }
+
+    public PlaylistVisibilityEnum getVisibility() {
+        return visibility;
+    }
+
+    public PlaylistCriteria setVisibility(PlaylistVisibilityEnum visibility) {
+        this.visibility = visibility;
         return this;
     }
 }
