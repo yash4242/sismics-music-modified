@@ -285,6 +285,8 @@ public class UserResource extends BaseResource {
         if (userId == null) {
             throw new ForbiddenClientException();
         }
+
+        AppContext.getInstance().setUserID(userId);
             
         // Create a new session token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
@@ -343,6 +345,8 @@ public class UserResource extends BaseResource {
         } catch (Exception e) {
             throw new ServerException("AuthenticationTokenError", "Error deleting authentication token: " + authToken, e);
         }
+
+        AppContext.getInstance().setUserID(null);
         
         // Deletes the client token in the HTTP response
         NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null);
