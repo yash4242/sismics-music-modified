@@ -192,7 +192,7 @@ public class ImportResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
+        System.out.println(">>>>>>>>>>>>>>>>IMPORT UPLOAD");
         // Validate input data
         Validation.required(fileBodyPart, "file");
         Validation.required(fileBodyPart.getFormDataContentDisposition().getFileName(), "filename");
