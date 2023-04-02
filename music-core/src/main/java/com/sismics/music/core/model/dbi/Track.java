@@ -85,10 +85,19 @@ public class Track {
      */
     private Date deleteDate;
 
+    private String userID;
+
     public Track() {
     }
 
-    public Track(String id, String albumId, String artistId, String fileName, String title, String titleCorrected, Integer year, String genre, Integer length, Integer bitrate, Integer order, boolean vbr, String format, Date createDate, Date deleteDate) {
+    public Track(String UserID) {
+        this.userID = UserID;
+    }
+
+    public Track(String id, String albumId, String artistId, String fileName, 
+                String title, String titleCorrected, Integer year, String genre, 
+                Integer length, Integer bitrate, Integer order, boolean vbr, 
+                String format, Date createDate, Date deleteDate, String userID) {
         this.id = id;
         this.albumId = albumId;
         this.artistId = artistId;
@@ -104,6 +113,7 @@ public class Track {
         this.format = format;
         this.createDate = createDate;
         this.deleteDate = deleteDate;
+        this.userID = userID;
     }
 
     /**
@@ -380,5 +390,23 @@ public class Track {
                 .add("id", id)
                 .add("title", title)
                 .toString();
+    }
+
+    /**
+     * Getter of userID.
+     *
+     * @return userID
+     */
+    public String getUserID() {
+        return userID;
+    }
+
+    /**
+     * Setter of userID.
+     *
+     * @param userID userID
+     */
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }

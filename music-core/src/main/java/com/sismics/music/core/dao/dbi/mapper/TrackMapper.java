@@ -29,7 +29,9 @@ public class TrackMapper extends BaseResultSetMapper<Track> {
                 "vbr",
                 "format",
                 "createdate",
-                "deletedate"};
+                "deletedate",
+                "user_ID"
+            };
     }
 
     @Override
@@ -51,6 +53,8 @@ public class TrackMapper extends BaseResultSetMapper<Track> {
                 r.getBoolean(columns[column++]),
                 r.getString(columns[column++]),
                 r.getTimestamp(columns[column++]),
-                r.getTimestamp(columns[column++]));
+                r.getTimestamp(columns[column++]),
+                r.getString(columns[column++])
+                );
     }
 }

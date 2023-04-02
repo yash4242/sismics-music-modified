@@ -90,6 +90,8 @@ public class AppContext {
      * Asynchronous executors.
      */
     private List<ExecutorService> asyncExecutorList;
+
+    private String userID;
     
     /**
      * Private constructor.
@@ -110,6 +112,8 @@ public class AppContext {
         lastFmService = new LastFmService();
         playerService = new PlayerService();
         transcoderService = new TranscoderService();
+
+        userID = null;
     }
     
     /**
@@ -264,4 +268,23 @@ public class AppContext {
     public ImportAudioService getImportAudioService() {
         return importAudioService;
     }
+
+    /**
+     * Getter of userID.
+     *
+     * @return userID
+     */
+    public String getUserID() {
+        return userID;
+    }
+
+    /**
+     * Setter of userID.
+     *
+     * @param userID userID
+     */
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+    
 }

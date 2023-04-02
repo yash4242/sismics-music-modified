@@ -61,7 +61,7 @@ public class AlbumResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-
+        System.out.println("AllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllbumResource.detail");
         // Get album info
         AlbumDao albumDao = new AlbumDao();
         List<AlbumDto> albumList = albumDao.findByCriteria(new AlbumCriteria().setUserId(principal.getId()).setId(id));
@@ -83,9 +83,8 @@ public class AlbumResource extends BaseResource {
         // Get track info
         JsonArrayBuilder tracks = Json.createArrayBuilder();
         TrackDao trackDao = new TrackDao();
-        List<TrackDto> trackList = trackDao.findByCriteria(new TrackCriteria()
-                .setAlbumId(album.getId())
-                .setUserId(principal.getId()));
+        List<TrackDto> trackList = trackDao.findByCriteria(new TrackCriteria().setAlbumId(album.getId()).setUserId(principal.getId())
+                                    );
         
         for (TrackDto trackDto : trackList) {
             tracks.add(Json.createObjectBuilder()
@@ -273,7 +272,9 @@ public class AlbumResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-
+        System.out.println("AAAAAAAALBUM REsourCE LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLIST");
+        System.out.println("BASE RESOURCE SAYS USERID IS "+ principal.getId());
+        System.out.println("APPCONTEXT SAYS USERID IS "+ AppContext.getInstance().getUserID());
         AlbumDao albumDao = new AlbumDao();
         PaginatedList<AlbumDto> paginatedList = PaginatedLists.create(limit, offset);
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
@@ -285,6 +286,10 @@ public class AlbumResource extends BaseResource {
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (AlbumDto album : paginatedList.getResultList()) {
+
+            if(!album.getUserID().equals(principal.getId()))
+                continue;
+
             items.add(Json.createObjectBuilder()
                     .add("id", album.getId())
                     .add("name", album.getName())
