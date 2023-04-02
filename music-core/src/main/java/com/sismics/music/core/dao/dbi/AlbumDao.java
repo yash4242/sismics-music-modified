@@ -27,7 +27,7 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
         List<String> criteriaList = new ArrayList<>();
         Map<String, Object> parameterMap = new HashMap<>();
 
-        StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0, a.albumart as albumArt, a.artist_id as artistId, ar.name as artistName, a.updatedate as c1, ");
+        StringBuilder sb = new StringBuilder("select a.id as id, a.name as c0, a.albumart as albumArt, a.artist_id as artistId, ar.name as artistName, a.updatedate as c1, a.USER_ID as USER_ID, ");
         if (criteria.getUserId() == null) {
             sb.append("sum(0) as c2");
         } else {
@@ -81,8 +81,8 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
 
         Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("insert into " +
-                " t_album(id, directory_id, artist_id, name, albumart, createdate, updatedate, location)" +
-                " values(:id, :directoryId, :artistId, :name, :albumArt, :createDate, :updateDate, :location)")
+                " t_album(id, directory_id, artist_id, name, albumart, createdate, updatedate, location, user_ID)" +
+                " values(:id, :directoryId, :artistId, :name, :albumArt, :createDate, :updateDate, :location, :userID)")
                 .bind("id", album.getId())
                 .bind("directoryId", album.getDirectoryId())
                 .bind("artistId", album.getArtistId())
@@ -91,6 +91,7 @@ public class AlbumDao extends BaseDao<AlbumDto, AlbumCriteria> {
                 .bind("updateDate", new Timestamp(album.getUpdateDate().getTime()))
                 .bind("createDate", new Timestamp(album.getCreateDate().getTime()))
                 .bind("location", album.getLocation())
+                .bind("userID", album.getUserID())
                 .execute();
 
         return album.getId();

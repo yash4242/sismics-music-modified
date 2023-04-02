@@ -11,6 +11,8 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.dbi.BaseDao;
 import com.sismics.util.dbi.filter.FilterCriteria;
 import org.skife.jdbi.v2.Handle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -77,6 +79,7 @@ public class TrackDao extends BaseDao<TrackDto, TrackCriteria> {
         }
         if (criteria.getUserId() != null) {
             parameterMap.put("userId", criteria.getUserId());
+            System.out.println(">>>>>>> CRITERA.getuserID IS NOT NULL IN TRACK DAO GETQUERYPARAM FUNCTION");
         }
 
         SortCriteria sortCriteria;
@@ -89,7 +92,7 @@ public class TrackDao extends BaseDao<TrackDto, TrackCriteria> {
         } else {
             sortCriteria = new SortCriteria(" order by t.number, t.title asc");
         }
-
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TRACK DAO GETQUERYPARAM FUNCTION sb: " + sb.toString());
         return new QueryParam(sb.toString(), criteriaList, parameterMap, sortCriteria, filterCriteria, new TrackDtoMapper());
     }
 
@@ -102,11 +105,11 @@ public class TrackDao extends BaseDao<TrackDto, TrackCriteria> {
     public String create(Track track) {
         track.setId(UUID.randomUUID().toString());
         track.setCreateDate(new Date());
-
+       System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TRACK DAO CREATEE FUNCTION");
         final Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("insert into " +
-                "  t_track(id, album_id, artist_id, filename, title, titlecorrected, year, genre, length, bitrate, number, vbr, format, createdate)" +
-                "  values(:id, :albumId, :artistId, :fileName, :title, :titleCorrected, :year, :genre, :length, :bitrate, :number, :vbr, :format, :createDate)")
+                "  t_track(id, album_id, artist_id, filename, title, titlecorrected, year, genre, length, bitrate, number, vbr, format, createdate, USER_ID)" +
+                "  values(:id, :albumId, :artistId, :fileName, :title, :titleCorrected, :year, :genre, :length, :bitrate, :number, :vbr, :format, :createDate, :userID)")
                 .bind("id", track.getId())
                 .bind("albumId", track.getAlbumId())
                 .bind("artistId", track.getArtistId())
@@ -121,8 +124,9 @@ public class TrackDao extends BaseDao<TrackDto, TrackCriteria> {
                 .bind("vbr", track.isVbr())
                 .bind("format", track.getFormat())
                 .bind("createDate", new Timestamp(track.getCreateDate().getTime()))
+                .bind("userID", track.getUserID())
                 .execute();
-
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TRACK DAO CREATEE FUNCTION SAYS USER ID IS AND IS PUT INTO DATABASE: "+track.getUserID());
         return track.getId();
     }
     

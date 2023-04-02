@@ -53,6 +53,10 @@ public class Album {
      */
     private Date deleteDate;
     
+
+    private String UserID;
+
+
     /**
      * Location.
      */
@@ -65,7 +69,9 @@ public class Album {
         this.id = id;
     }
 
-    public Album(String id, String directoryId, String artistId, String name, String albumArt, Date createDate, Date updateDate, Date deleteDate, String location) {
+
+
+    public Album(String id, String directoryId, String artistId, String name, String albumArt, Date createDate, Date updateDate, Date deleteDate, String location, String userID) {
         this.id = id;
         this.directoryId = directoryId;
         this.artistId = artistId;
@@ -75,6 +81,7 @@ public class Album {
         this.updateDate = updateDate;
         this.deleteDate = deleteDate;
         this.location = location;
+        this.UserID = userID;
     }
 
     /**
@@ -254,6 +261,17 @@ public class Album {
     public void setLocation(String location) {
         this.location = location;
     }
+
+
+    public String getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(String userID) {
+        this.UserID = userID;
+    }
+
+
 
     @Override
     public String toString() {
