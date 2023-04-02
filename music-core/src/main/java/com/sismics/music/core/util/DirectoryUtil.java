@@ -5,7 +5,8 @@ import java.io.File;
 import org.apache.commons.lang.StringUtils;
 
 import com.sismics.util.EnvironmentUtil;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * Utilities to gain access to the storage directories used by the application.
  * 
@@ -17,6 +18,7 @@ public class DirectoryUtil {
      * 
      * @return Base data directory
      */
+    private static final Logger log = LoggerFactory.getLogger(DirectoryUtil.class);
     public static File getBaseDataDirectory() {
         File baseDataDir = null;
         if (StringUtils.isNotBlank(EnvironmentUtil.getMusicHome())) {
@@ -78,6 +80,8 @@ public class DirectoryUtil {
      * @return Import audio directory.
      */
     public static File getImportAudioDirectory() {
+        // log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+        // log.info("Importaudiodir: "+getDataSubDirectory("importaudio").getAbsolutePath());
         return getDataSubDirectory("importaudio");
     }
 

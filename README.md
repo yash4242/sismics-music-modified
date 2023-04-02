@@ -1,3 +1,5 @@
+## Note: Latest code is in the `main` branch as per project instructions.
+
 # Music - Project 1 
 
 Welcome to the first project! This project on the Music app by Sismics. The original repository can be found [here](https://github.com/sismics/music). 

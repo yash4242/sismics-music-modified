@@ -20,6 +20,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.Map.Entry;
 
+import java.io.File;
+import java.security.Principal;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 
@@ -129,15 +131,42 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
             if (dir == null) {
                 continue;
             }
-            
+            // modify dir to create whatever the new path should be
+            // ie, make newdir=dir.resolve("user")
+            // user newdir instead of dir in Path path 
+            // TODO: how to find the userID to get path 
+            // Path newdir=dir.resolve(principal.getId());
             for (WatchEvent<?> event : watchKey.pollEvents()) {
                 @SuppressWarnings("unchecked")
                 WatchEvent<Path> eventPath = (WatchEvent<Path>) event;
                 System.out.println(">>>> event: " +event.toString());
                 WatchEvent.Kind<Path> kind = eventPath.kind();
                 Path path = dir.resolve(eventPath.context());
+                // log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+                // log.info("Eventpath " + eventPath.context().toString());
                 final Directory directory = getParentDirectory(path);
                 Path directoryPath = Paths.get(directory.getLocation());
+                // ls:
+                // File dPath = new File(directoryPath.toString());
+                // //List of all files and directories
+                // String contents[] = dPath.list();
+                // log.info("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+                // log.info("List of files and directories in the specified directory:");
+                // for(int i=0; i<contents.length; i++) {
+                //     log.info(contents[i]);
+                // }
+                if (kind == ENTRY_CREATE) {
+                    if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+                        // Watch the new directory if it's not too deep, and index it fully
+                        if (path.getNameCount() - directoryPath.getNameCount() == 1) {
+                            log.info("New directory created, watching and indexing it: " + path);
+                            watchPath(path);
+                            indexFolder(directory, path);
+                        }
+                    } else {
+                        indexNewFile(directory, path);
+                    }
+                }
                 
                 if (kind == ENTRY_CREATE) {
                     if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {

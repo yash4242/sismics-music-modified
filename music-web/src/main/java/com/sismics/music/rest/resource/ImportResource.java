@@ -20,7 +20,10 @@ import javax.json.JsonObjectBuilder;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.security.Principal;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Import REST resources.
@@ -29,6 +32,8 @@ import java.util.List;
  */
 @Path("/import")
 public class ImportResource extends BaseResource {
+        private static final Logger log = LoggerFactory.getLogger(ImportResource.class);
+
     /**
      * Import new tracks from external sources.
      * 
@@ -277,7 +282,6 @@ public class ImportResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        
         // Validate input
         Validation.required(fileName, "file");
         artist = Validation.length(artist, "artist", 1, 1000);
@@ -315,7 +319,8 @@ public class ImportResource extends BaseResource {
         } catch (Exception e) {
             throw new ServerException("TagError", e.getMessage(), e);
         }
-        
+        // log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
+        // log.info("TAG Ending, dir: " + directoryId + ", file: " + fileName);
         // Always return OK
         return okJson();
     }
