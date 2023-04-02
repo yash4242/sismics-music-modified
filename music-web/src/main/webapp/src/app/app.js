@@ -284,6 +284,15 @@ angular.module('music',
               }
             }
           })
+        .state('register', {
+          url: '/register',
+          views: {
+            'page': {
+              templateUrl: 'partial/myregister.html',
+              controller: 'MyRegister'
+            }
+          }
+        })
 
       // Configuring Restangular
       RestangularProvider.setBaseUrl('../api');
