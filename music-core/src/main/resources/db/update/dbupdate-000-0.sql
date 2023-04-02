@@ -8,6 +8,7 @@ create cached table T_ALBUM (
    CREATEDATE           datetime             not null,
    UPDATEDATE           datetime             not null,
    DELETEDATE           datetime             null,
+   USER_ID              varchar(36)          not null,
    constraint PK_T_ALBUM primary key (ID)
 );
 
@@ -98,6 +99,7 @@ create cached table T_PLAYLIST (
    ID                   varchar(36)          not null,
    USER_ID              varchar(36)          not null,
    NAME                 varchar(200)         null,
+   VISIBILITY           varchar(10)          not null default 'PUBLIC',
    constraint PK_T_PLAYLIST primary key (ID)
 );
 
@@ -181,6 +183,7 @@ create cached table T_TRACK (
    FAVORITE             bit                  not null default '0',
    CREATEDATE           datetime             not null,
    DELETEDATE           datetime             null,
+   USER_ID              varchar(36)          not null,
    constraint PK_T_TRACK primary key (ID)
 );
 

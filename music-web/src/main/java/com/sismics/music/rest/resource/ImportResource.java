@@ -197,9 +197,7 @@ public class ImportResource extends BaseResource {
         if (!authenticate()) {
             throw new ForbiddenClientException();
         }
-        // get userID to upload to directory:
-        log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        log.info("username?: "+principal.getId());
+        System.out.println(">>>>>>>>>>>>>>>>IMPORT UPLOAD");
         // Validate input data
         Validation.required(fileBodyPart, "file");
         Validation.required(fileBodyPart.getFormDataContentDisposition().getFileName(), "filename");

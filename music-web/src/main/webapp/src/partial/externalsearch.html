@@ -1,0 +1,8 @@
+<div class="music-add">
+    <ul class="nav nav-tabs">
+      <li ng-class="{ active: $state.current.name == 'main.externalsearch.spotify' }"><a href="#/externalsearch/spotify">Spotify</a></li>
+      <li ng-class="{ active: $state.current.name == 'main.externalsearch.lastfm' }"><a href="#/externalsearch/lastfm">LastFm</a></li>
+    </ul>
+  
+    <div ui-view="tab"></div>
+  </div>

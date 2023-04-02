@@ -113,6 +113,33 @@ angular.module('music',
               }
             }
           })
+          .state('main.externalsearch', {
+            url: '/externalsearch',
+            views: {
+              'content': {
+                templateUrl: 'partial/externalsearch.html'
+                //controller: 'ExternalSearch'
+              }
+            }
+          })
+          .state('main.externalsearch.spotify', {
+            url: '/spotify',
+            views: {
+              'tab': {
+                templateUrl: 'partial/externalsearch.spotify.html',
+                controller: 'Spotify'
+              }
+            }
+          })
+          .state('main.externalsearch.lastfm', {
+            url: '/lastfm',
+            views: {
+              'tab': {
+                templateUrl: 'partial/externalsearch.lastfm.html',
+                controller: 'LastFm'
+              }
+            }
+          })
           .state('main.add', {
             url: '/add',
             views: {
@@ -257,6 +284,15 @@ angular.module('music',
               }
             }
           })
+        .state('register', {
+          url: '/register',
+          views: {
+            'page': {
+              templateUrl: 'partial/myregister.html',
+              controller: 'MyRegister'
+            }
+          }
+        })
 
       // Configuring Restangular
       RestangularProvider.setBaseUrl('../api');

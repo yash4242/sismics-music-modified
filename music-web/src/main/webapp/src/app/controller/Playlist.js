@@ -81,4 +81,44 @@ angular.module('music').controller('Playlist', function($scope, $state, $statePa
       });
     }
   };
+
+  $scope.spotifyrecommend = function() {
+    //$scope.query_result = query_str; //+ " result";
+    Restangular.one('playlist', $stateParams.id).one('spotifyrecommendation').get()
+      .then(function (data) {
+        $scope.spotifyrecommendations = data;
+        if ($scope.spotifyrecommendations.length === 0) {
+          toaster.pop('warning', 'Search', 'No tracks found');
+        }
+      });
+  };
+
+  $scope.lastfmrecommend = function() {
+    //$scope.query_result = query_str; //+ " result";
+    Restangular.one('playlist', $stateParams.id).one('lastfmrecommendation').get()
+      .then(function (data) {
+        $scope.lastfmrecommendations = data;
+        if ($scope.lastfmrecommendations.length === 0) {
+          toaster.pop('warning', 'Search', 'No tracks found');
+        }
+      });
+  };
+
+  $scope.changeVisibility = function(value)  {
+    //$scope.query_result = query_str; //+ " result";
+    //console.log("type:", visibility_type);
+
+    $scope.visibility_type = value;
+    console.log('value changed to', value);
+  
+
+    Restangular.one('playlist', $stateParams.id).post('visibility', {visibility: value})
+      .then(function () {
+        // console.log(data);
+        //$scope.visibility = value;
+        console.log("sucess");
+      });
+  };
+
+
 });

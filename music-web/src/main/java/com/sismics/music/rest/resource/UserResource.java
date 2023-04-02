@@ -23,6 +23,8 @@ import com.sismics.rest.exception.ClientException;
 import com.sismics.rest.exception.ForbiddenClientException;
 import com.sismics.rest.exception.ServerException;
 import com.sismics.rest.util.Validation;
+import com.sismics.rest.util.UnvalUser;
+import com.sismics.rest.util.UserValidation;
 import com.sismics.security.UserPrincipal;
 import com.sismics.util.LocaleUtil;
 import com.sismics.util.filter.TokenBasedSecurityFilter;
@@ -61,20 +63,22 @@ public class UserResource extends BaseResource {
         @FormParam("username") String username,
         @FormParam("password") String password,
         @FormParam("locale") String localeId,
-        @FormParam("email") String email) {
+            @FormParam("email") String email)
+    {
 
-        if (!authenticate()) {
+        if (!authenticate())
+        {
             throw new ForbiddenClientException();
         }
         checkPrivilege(Privilege.ADMIN);
-        
+
         // Validate the input data
         username = Validation.length(username, "username", 3, 50);
         Validation.alphanumeric(username, "username");
         password = Validation.length(password, "password", 8, 50);
         email = Validation.length(email, "email", 3, 50);
         Validation.email(email, "email");
-        
+
         // Create the user
         User user = new User();
         user.setRoleId(Constants.DEFAULT_USER_ROLE);
@@ -83,21 +87,104 @@ public class UserResource extends BaseResource {
         user.setEmail(email);
         user.setCreateDate(new Date());
 
-        if (localeId == null) {
+        if (localeId == null)
+        {
             // Set the locale from the HTTP headers
             localeId = LocaleUtil.getLocaleIdFromAcceptLanguage(request.getHeader("Accept-Language"));
         }
         user.setLocaleId(localeId);
-        
+
         // Create the user
         UserDao userDao = new UserDao();
         String userId = null;
-        try {
+        try
+        {
             userId = userDao.create(user);
-        } catch (Exception e) {
-            if ("AlreadyExistingUsername".equals(e.getMessage())) {
+        } catch (Exception e)
+        {
+            if ("AlreadyExistingUsername".equals(e.getMessage()))
+            {
                 throw new ServerException("AlreadyExistingUsername", "Login already used", e);
-            } else {
+            } else
+            {
+                throw new ServerException("UnknownError", "Unknown Server Error", e);
+            }
+        }
+
+        // Create the default playlist for this user
+        Playlist playlist = new Playlist();
+        playlist.setUserId(userId);
+        Playlist.createPlaylist(playlist);
+
+        // Raise a user creation event
+        UserCreatedEvent userCreatedEvent = new UserCreatedEvent();
+        userCreatedEvent.setUser(user);
+        AppContext.getInstance().getAsyncEventBus().post(userCreatedEvent);
+
+        return okJson();
+    }
+    
+    /**
+     * Creates a new user.
+     * 
+     * @param username
+     *            User's username
+     * @param password
+     *            Password
+     * @param email
+     *            E-Mail
+     * @param localeId
+     *            Locale ID
+     * @return Response
+     */
+    @PUT
+    @Path("regNew")
+    public Response registerNew(
+            @FormParam("username") String username,
+            @FormParam("password") String password,
+            @FormParam("locale") String localeId,
+            @FormParam("email") String email)
+    {
+
+        UnvalUser unvalUser = new UnvalUser();
+        unvalUser.setUsername(username);
+        unvalUser.setPassword(password);
+        unvalUser.setEmail(email);
+        UserValidation.validate(unvalUser);
+        System.out.println("VALIDATED");
+
+        username = unvalUser.getUsername();
+        password = unvalUser.getPassword();
+        email = unvalUser.getEmail();
+
+        // Create the user
+        User user = new User();
+        user.setRoleId(Constants.DEFAULT_USER_ROLE);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
+        user.setCreateDate(new Date());
+
+        if (localeId == null)
+        {
+            // Set the locale from the HTTP headers
+            localeId = LocaleUtil.getLocaleIdFromAcceptLanguage(request.getHeader("Accept-Language"));
+        }
+        user.setLocaleId(localeId);
+
+        // Create the user
+        UserDao userDao = new UserDao();
+        String userId = null;
+        try
+        {
+            userId = userDao.create(user);
+        } catch (Exception e)
+        {
+            if ("AlreadyExistingUsername".equals(e.getMessage()))
+            {
+                throw new ServerException("AlreadyExistingUsername", "Login already used", e);
+            } else
+            {
                 throw new ServerException("UnknownError", "Unknown Server Error", e);
             }
         }
@@ -285,6 +372,8 @@ public class UserResource extends BaseResource {
         if (userId == null) {
             throw new ForbiddenClientException();
         }
+
+        AppContext.getInstance().setUserID(userId);
             
         // Create a new session token
         AuthenticationTokenDao authenticationTokenDao = new AuthenticationTokenDao();
@@ -343,6 +432,8 @@ public class UserResource extends BaseResource {
         } catch (Exception e) {
             throw new ServerException("AuthenticationTokenError", "Error deleting authentication token: " + authToken, e);
         }
+
+        AppContext.getInstance().setUserID(null);
         
         // Deletes the client token in the HTTP response
         NewCookie cookie = new NewCookie(TokenBasedSecurityFilter.COOKIE_NAME, null);

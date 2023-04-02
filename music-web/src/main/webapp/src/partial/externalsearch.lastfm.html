@@ -1,0 +1,25 @@
+<div>
+  <form class="well-lg row" name="apiForm" novalidate>
+    <div class="form-group col-sm-6">
+      <input name="query" type="text" id="inputQuery" placeholder="LastFm Search" required class="form-control" ng-model="query" />
+    </div>
+  
+    <button type="submit" class="btn btn-primary col-sm-2" ng-click="lastfmSearch(query)" >
+      <span class="glyphicon glyphicon-search"></span> Search
+    </button>
+  </form>
+  
+  </div>
+
+  <div class="row results">
+    <div class="col-md-3 btn-pointer" ng-repeat="track in results.tracks"> 
+      <div class="thumbnail">
+        <div class="caption text-center">
+          {{ track.name }}
+          -
+          {{ track.artist }}
+        </div>
+      </div>
+    </div>
+  </div>
+  

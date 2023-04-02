@@ -27,7 +27,7 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
         List<String> criteriaList = new ArrayList<>();
         Map<String, Object> parameterMap = new HashMap<>();
 
-        StringBuilder sb = new StringBuilder("select p.id as id, p.name as c0,")
+        StringBuilder sb = new StringBuilder("select p.id as id, p.name as c0, p.visibility as v,")
                 .append("  p.user_id as userId,")
                 .append("  count(pt.id) as c1,")
                 .append("  sum(utr.playcount) as c2")
@@ -55,6 +55,10 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
             criteriaList.add("lower(p.name) like lower(:nameLike)");
             parameterMap.put("nameLike", "%" + criteria.getNameLike() + "%");
         }
+        if (criteria.getVisibility() != null) {
+            criteriaList.add("p.visibility = :visibility");
+            parameterMap.put("visibility", criteria.getVisibility().toString());
+        }
 
         return new QueryParam(sb.toString(), criteriaList, parameterMap, null, filterCriteria, Lists.newArrayList("p.id"), new PlaylistMapper());
     }
@@ -66,7 +70,9 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
      * @return Playlist ID
      */
     public String create(Playlist playlist) {
+        // playlist.setId(UUID.randomUUID().toString());
         final Handle handle = ThreadLocalContext.get().getHandle();
+        System.out.println("Playlist creation in progress for user: " + playlist.getUserId() + " and name: " + playlist.getName());
         handle.createStatement("insert into " +
                 "  t_playlist(id, user_id, name)" +
                 "  values(:id, :userId, :name)")
@@ -78,6 +84,15 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
         return playlist.getId();
     }
 
+    public void updateVisibility(Playlist playlist) {
+        final Handle handle = ThreadLocalContext.get().getHandle();
+        handle.createStatement("update t_playlist" +
+                "  set visibility = :visibility" +
+                "  where id = :id")
+                .bind("visibility", playlist.getVisibility().toString())
+                .bind("id", playlist.getId())
+                .execute();
+    }
     /**
      * Update a playlist.
      *
@@ -86,9 +101,11 @@ public class PlaylistDao extends BaseDao<PlaylistDto, PlaylistCriteria> {
     public void update(Playlist playlist) {
         final Handle handle = ThreadLocalContext.get().getHandle();
         handle.createStatement("update t_playlist" +
-                "  set name = :name" +
+                "  set name = :name," +
+                "  visibility = :visibility" +
                 "  where id = :id")
                 .bind("name", playlist.getName())
+                .bind("visibility", playlist.getVisibility().toString())
                 .bind("id", playlist.getId())
                 .execute();
     }

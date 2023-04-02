@@ -153,10 +153,11 @@ public class CollectionService extends AbstractScheduledService {
             if (track != null) {
                 readTrackMetadata(directory, file, track);
                 trackDao.update(track);
-
+                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>TRACK != NULL");
                 // FIXME update album date if track has changed?
             } else {
-                track = new Track();
+                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>TRACk == NULL");
+                track = new Track(AppContext.getInstance().getUserID());
                 track.setFileName(file.toAbsolutePath().toString());
 
                 readTrackMetadata(directory, file, track);
@@ -270,6 +271,7 @@ public class CollectionService extends AbstractScheduledService {
             Date updateDate = getDirectoryUpdateDate(parentPath);
             album.setCreateDate(updateDate);
             album.setUpdateDate(updateDate);
+            album.setUserID(AppContext.getInstance().getUserID());
             albumDao.create(album);
         }
         track.setAlbumId(album.getId());

@@ -124,6 +124,7 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
     @Override
     protected void run() throws Exception {
         while (isRunning()) {
+            System.out.println(">>>> Void run method");
             WatchKey watchKey = watchService.take();
             
             Path dir = watchKeyMap.get(watchKey);
@@ -138,6 +139,7 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
             for (WatchEvent<?> event : watchKey.pollEvents()) {
                 @SuppressWarnings("unchecked")
                 WatchEvent<Path> eventPath = (WatchEvent<Path>) event;
+                System.out.println(">>>> event: " +event.toString());
                 WatchEvent.Kind<Path> kind = eventPath.kind();
                 Path path = dir.resolve(eventPath.context());
                 // log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -162,6 +164,23 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
                             indexFolder(directory, path);
                         }
                     } else {
+                        indexNewFile(directory, path);
+                    }
+                }
+                
+                if (kind == ENTRY_CREATE) {
+                    if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+                        // Watch the new directory if it's not too deep, and index it fully
+                        if (path.getNameCount() - directoryPath.getNameCount() == 1) {
+                            log.info("New directory created, watching and indexing it: " + path);
+                            watchPath(path);
+                            indexFolder(directory, path);
+                            // directory.location is the parent directory e.g. /home/commander/swe/parent_dir/
+                            // path is the new directory e.g  /home/commander/swe/parent_dir/3_alb_art - 3_art/3_title.mp3
+                            System.out.println(">>>>>>>indexFolder() was called" + directory.toString() + " " + path.toString());
+                        }
+                    } else {
+                        System.out.println(">>>>>>>indexNewFile() was called");
                         indexNewFile(directory, path);
                     }
                 }
@@ -213,6 +232,7 @@ public class CollectionWatchService extends AbstractExecutionThreadService {
         }
         
         log.info("New audio file created, indexing it: " + file);
+        System.out.println("The userID should be " + AppContext.getInstance().getUserID());
         
         // Wait until the file does not grow
         boolean isGrowing = true;

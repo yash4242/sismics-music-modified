@@ -42,6 +42,8 @@ public class AlbumDto {
      * User play count.
      */
     private Long userPlayCount;
+
+    private String UserID;
     
     public String getId() {
         return id;
@@ -97,5 +99,13 @@ public class AlbumDto {
 
     public void setUserPlayCount(Long userPlayCount) {
         this.userPlayCount = userPlayCount;
+    }
+
+    public String getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(String userID) {
+        this.UserID = userID;
     }
 }

@@ -23,7 +23,9 @@ public class AlbumMapper extends BaseResultSetMapper<Album> {
                 "updatedate",
                 "createdate",
                 "deletedate",
-                "location"};
+                "location",
+                "User_ID"
+            };
     }
 
     @Override
@@ -39,6 +41,7 @@ public class AlbumMapper extends BaseResultSetMapper<Album> {
                 r.getTimestamp(columns[column++]),
                 r.getTimestamp(columns[column++]),
                 r.getTimestamp(columns[column++]),
+                r.getString(columns[column++]),
                 r.getString(columns[column]));
     }
 }
