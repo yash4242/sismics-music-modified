@@ -22,7 +22,6 @@ import com.sismics.rest.util.Validation;
 import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.music.core.model.context.AppContext;
 import java.util.Collection;
-import de.umass.lastfm.*;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
@@ -33,7 +32,6 @@ import javax.ws.rs.core.Response;
 import java.text.MessageFormat;
 import java.util.List;
 
-import com.sismics.music.rest.searchfeature.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;

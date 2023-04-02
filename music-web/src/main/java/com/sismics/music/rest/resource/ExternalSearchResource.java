@@ -1,24 +1,12 @@
 package com.sismics.music.rest.resource;
 
-import com.google.common.base.Strings;
-import com.sismics.music.core.model.context.AppContext;
-import com.sismics.music.core.service.lastfm.LastFmService;
 import com.sismics.rest.exception.ForbiddenClientException;
 // import de.umass.lastfm.Album;
 // import de.umass.lastfm.ImageSize;
-import de.umass.lastfm.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
-import java.util.Collection;
 import javax.json.JsonObject;
 
 import com.sismics.music.rest.searchfeature.*;
@@ -30,11 +18,6 @@ import com.sismics.music.rest.searchfeature.*;
  */
 @Path("/external")
 public class ExternalSearchResource extends BaseResource {
-    /**
-     * Logger.
-     */
-    private static final Logger log = LoggerFactory.getLogger(ExternalSearchResource.class);
-
     /**
      * Search Spotify tracks
      *

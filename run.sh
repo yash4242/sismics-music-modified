@@ -1,3 +1,6 @@
+# Uncomment if any changed made and .db files need to be removed before building
+# find  . -name "*.db"  | xargs -d'\n' rm
+
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 lib_dir=./lastfm-lib
 

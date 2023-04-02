@@ -11,8 +11,6 @@ import com.sismics.util.context.ThreadLocalContext;
 import com.sismics.util.dbi.BaseDao;
 import com.sismics.util.dbi.filter.FilterCriteria;
 import org.skife.jdbi.v2.Handle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.util.*;

@@ -1,6 +1,5 @@
 package com.sismics.music.core.dao.dbi;
 
-import com.sismics.music.core.constant.PlaylistVisibilityEnum;
 import com.google.common.collect.Lists;
 import com.sismics.music.core.dao.dbi.criteria.PlaylistCriteria;
 import com.sismics.music.core.dao.dbi.dto.PlaylistDto;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Playlist DAO.
