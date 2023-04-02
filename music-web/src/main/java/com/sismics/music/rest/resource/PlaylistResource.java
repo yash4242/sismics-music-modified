@@ -41,6 +41,7 @@ import java.net.HttpURLConnection;
 import java.util.Base64;
 import java.net.URL;
 import javax.json.JsonReader;
+import com.sismics.music.core.constant.PlaylistVisibilityEnum;
 
 /**
  * Playlist REST resources.
@@ -143,7 +144,8 @@ public class PlaylistResource extends BaseResource {
 
         // Get the playlist
         PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
+                .setUserId(principal.getId())
+                ;
         if (DEFAULt_playlist.equals(playlistId)) {
             criteria.setDefaultPlaylist(true);
         } else {
@@ -151,7 +153,16 @@ public class PlaylistResource extends BaseResource {
             criteria.setId(playlistId);
         }
         PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
+        // System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        // System.out.println("Trying to add to playlist: " + playlist.getName() );
         notFoundIfNull(playlist, "Playlist: " + playlistId);
+        // System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        // System.out.println("Trying to add to playlist: " + playlist.getName() );
+        // // Check if the playlist is owned by the user currently logged in
+        // if (!(playlist.getVisibility()==PlaylistVisibilityEnum.COLLAB) || !principal.getId().equals(playlist.getUserId())) {
+        //     System.out.println("Playlist is not owned by the user currently logged in");
+        //     throw new ForbiddenClientException();
+        // }
 
         PlaylistTrackDao playlistTrackDao = new PlaylistTrackDao();
         if (clear != null && clear) {
@@ -193,7 +204,8 @@ public class PlaylistResource extends BaseResource {
 
         // Get the playlist
         PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
+                // .setUserId(principal.getId())
+                ;
         if (DEFAULt_playlist.equals(playlistId)) {
             criteria.setDefaultPlaylist(true);
         } else {
@@ -202,6 +214,14 @@ public class PlaylistResource extends BaseResource {
         }
         PlaylistDto playlist = new PlaylistDao().findFirstByCriteria(criteria);
         notFoundIfNull(playlist, "Playlist: " + playlistId);
+        // System.out.println("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        // System.out.println("Trying to add to playlist: " + playlist.getName() );
+        // System.out.println("Visibility: " + playlist.getVisibility().toString());
+        // Check if the playlist is owned by the user currently logged in
+        if (!(playlist.getVisibility()==PlaylistVisibilityEnum.COLLAB) &&  !principal.getId().equals(playlist.getUserId())) {
+            System.out.println("Playlist is not owned by the user currently logged in");
+            throw new ForbiddenClientException();
+        }
 
         PlaylistTrackDao playlistTrackDao = new PlaylistTrackDao();
         if (clear != null && clear) {
@@ -465,22 +485,45 @@ public class PlaylistResource extends BaseResource {
         SortCriteria sortCriteria = new SortCriteria(sortColumn, asc);
         new PlaylistDao().findByCriteria(paginatedList, new PlaylistCriteria()
                 .setDefaultPlaylist(false)
-                .setUserId(principal.getId()), sortCriteria, null);
+                // .setUserId(principal.getId())
+                , sortCriteria, null);
+        
+        // Print the contents of paginatedList
+        // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        // System.out.println(paginatedList.getResultList().size());
 
         // Output the list
         JsonObjectBuilder response = Json.createObjectBuilder();
         JsonArrayBuilder items = Json.createArrayBuilder();
         for (PlaylistDto playlist : paginatedList.getResultList()) {
-            items.add(Json.createObjectBuilder()
-                    .add("id", playlist.getId())
-                    .add("name", playlist.getName())
-                    .add("trackCount", playlist.getPlaylistTrackCount())
-                    .add("userTrackPlayCount", playlist.getUserTrackPlayCount()));
+            // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            // System.out.println(playlist.getVisibility());
+            // System.out.println("Playlist created by: "+playlist.getUserId());
+            // System.out.println("Current user: "+principal.getId());
+            // check if the playlist is public or if the playlist.user_id is the same as the current user
+            if (!(playlist.getVisibility() == PlaylistVisibilityEnum.PRIVATE) || playlist.getUserId().equals(principal.getId())) {
+                items.add(Json.createObjectBuilder()
+                        .add("id", playlist.getId())
+                        .add("name", playlist.getName())
+                        .add("trackCount", playlist.getPlaylistTrackCount())
+                        .add("userTrackPlayCount", playlist.getUserTrackPlayCount()));
+            }
+            // items.add(Json.createObjectBuilder()
+            //         .add("id", playlist.getId())
+            //         .add("name", playlist.getName())
+            //         .add("trackCount", playlist.getPlaylistTrackCount())
+            //         .add("userTrackPlayCount", playlist.getUserTrackPlayCount()));
         }
 
         response.add("total", paginatedList.getResultCount());
         response.add("items", items);
-
+        JsonArray actual= items.build();
+        // System.out.println("Returning: " + renderJson(response));
+        // print the items in the list of items
+        for (int i = 0; i < actual.size(); i++) {
+            System.out.println("Item: " + actual.get(i));
+        }
+        System.out.println("Returning: " );
         return renderJson(response);
     }
 
@@ -499,7 +542,8 @@ public class PlaylistResource extends BaseResource {
 
         // Get the playlist
         PlaylistCriteria criteria = new PlaylistCriteria()
-                .setUserId(principal.getId());
+                // .setUserId(principal.getId())
+                ;
         if (DEFAULt_playlist.equals(playlistId)) {
             criteria.setDefaultPlaylist(true);
         } else {
@@ -592,6 +636,46 @@ public class PlaylistResource extends BaseResource {
         return response;
     }
 
+    // function to change the visibility of a playlist
+    @POST
+    @Path("{id: [a-z0-9\\-]+}/visibility")
+    public Response changeVisibility(
+            @PathParam("id") String playlistId,
+            @FormParam("visibility") String visibility) {
+        if (!authenticate()) {
+            throw new ForbiddenClientException();
+        }
+        // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        // System.out.println(visibility);
+        // Get the playlist
+        PlaylistCriteria criteria = new PlaylistCriteria()
+                .setUserId(principal.getId());
+        if (DEFAULt_playlist.equals(playlistId)) {
+            criteria.setDefaultPlaylist(true);
+        } else {
+            criteria.setDefaultPlaylist(false);
+            criteria.setId(playlistId);
+        }
+        PlaylistDto playlistDto = new PlaylistDao().findFirstByCriteria(criteria);
+        notFoundIfNull(playlistDto, "Playlist: " + playlistId);
+        visibility=visibility.toUpperCase();
+        Playlist playlist=new Playlist(playlistDto.getId(),playlistDto.getUserId());
+        System.out.println("User logged in: " + principal.getId());
+        System.out.println("Playlist creator: " + playlist.getUserId());
+        System.out.println("Playlist visibility: " + playlist.getVisibility());
+        System.out.println("Visibility to be changed to: " + visibility);
+        if(playlist.getVisibility().equals(visibility)) {
+            return okJson();
+        }
+        playlist.setVisibility(PlaylistVisibilityEnum.valueOf(visibility));
+        System.out.println("Visibility changed to: "+ playlist.getVisibility().toString());
+        new PlaylistDao().updateVisibility(playlist);
+        
+
+        // Always return OK
+        return okJson();
+    }
+    
     // This function returns a JsonObject containing the tracks in the playlist
     public JsonObject playlistTracks(@PathParam("id") String playlistId) {
         // Get the playlist
