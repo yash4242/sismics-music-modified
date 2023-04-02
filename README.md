@@ -1,4 +1,3 @@
-## Note: Latest code is in the `main` branch as per project instructions.
 
 # Music - Project 1 
 
